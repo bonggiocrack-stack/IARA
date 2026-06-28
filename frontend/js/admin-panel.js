@@ -36,12 +36,8 @@ async function checkServerHealth() {
   } finally {
     btn.textContent = 'Ingresar';
     btn.disabled = false;
-  } catch (err) {
-    hint.textContent = `❌ No se pudo conectar al servidor: ${err.message}`;
-    hint.style.color = '#ef4444';
-    btn.textContent = 'Ingresar';
-    btn.disabled = false;
   }
+}
 }
 
 const passwordToggle = document.getElementById('passwordToggle');
