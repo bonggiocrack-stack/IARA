@@ -5,6 +5,10 @@ backend/node_modules/
 # Variables de entorno
 backend/.env
 .env
+.env.local
+
+# Backend data
+backend/data/
 
 # Uploads locales
 uploads/
