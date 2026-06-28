@@ -174,11 +174,9 @@ function initProductFilters() {
 }
 
 // Update Cart Count Badge (definido en cart.js)
-
-// Función para agregar producto y actualizar badge
 window.addToCartAndUpdate = function (product) {
-  addToCart(product);
-  updateCartBadge();
+  if (typeof addToCart === 'function') addToCart(product);
+  if (typeof updateCartBadge === 'function') updateCartBadge();
 };
 
 // Sakura interaction (Hero)
@@ -208,14 +206,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initNewsletterForm();
   initSmoothScroll();
   initProductFilters();
-  updateCartBadge();
+  if (typeof updateCartBadge === 'function') updateCartBadge();
   initSakuraInteraction();
 });
 
 // Detectar cambios en el carrito (para actualizar badge en tiempo real)
 window.addEventListener('storage', (e) => {
-  if (e.key === CONFIG.CART.STORAGE_KEY) {
-    updateCartBadge();
+  if (typeof CONFIG !== 'undefined' && CONFIG.CART && e.key === CONFIG.CART.STORAGE_KEY) {
+    if (typeof updateCartBadge === 'function') updateCartBadge();
   }
 });
 
