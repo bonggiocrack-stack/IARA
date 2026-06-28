@@ -2,6 +2,15 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.get('/api/debug-env', (req, res) => {
+  res.json({
+    ADMIN_USER: process.env.ADMIN_USER || 'NOT_SET',
+    ADMIN_PASS: process.env.ADMIN_PASS ? '***SET***' : 'NOT_SET',
+    JWT_SECRET: process.env.JWT_SECRET ? '***SET***' : 'NOT_SET',
+    ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || 'NOT_SET',
+    ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || 'NOT_SET'
+  });
+});
 
 try {
   const helmet = require('helmet');
@@ -20,72 +29,30 @@ try {
 try {
   const dotenv = require('dotenv');
   dotenv.config();
-  console.log('dotenv loaded, NODE_ENV:', process.env.NODE_ENV);
 } catch (e) { console.error('dotenv:', e.message); }
-
-try {
-  const pino = require('pino');
-  const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
-  console.log('pino loaded');
-} catch (e) { console.error('pino:', e.message); }
 
 try {
   const jwt = require('jsonwebtoken');
   const JWT_SECRET = process.env.JWT_SECRET || 'change_me_in_production';
-  console.log('jwt loaded');
-} catch (e) { console.error('jwt:', e.message); }
+  console.log('jwt loaded, secret length:', JWT_SECRET.length);
 
-try {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-  });
-  console.log('pg pool created');
-
-  const useLocalFallback = !process.env.DATABASE_URL || process.env.DATABASE_URL.includes('user:password@localhost');
-  let localProducts = [];
-  let localTestimonials = [];
-  let localSiteTexts = {};
-  let nextProductId = 1;
-  let nextTestimonialId = 1;
-
-  async function initDB() {
-    if (useLocalFallback) {
-      console.log('local fallback mode');
-      return;
-    }
+  app.post('/api/admin/login', (req, res) => {
     try {
-      await pool.query(`CREATE TABLE IF NOT EXISTS products (id SERIAL PRIMARY KEY, name TEXT NOT NULL, category TEXT DEFAULT 'pulseras', price REAL NOT NULL)`);
-      console.log('products table ready');
+      const { username, password } = req.body || {};
+      if (!username || !password) return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
+      const ADMIN_USER = process.env.ADMIN_USER || 'iara';
+      const ADMIN_PASS = process.env.ADMIN_PASS || 'pulseras2026';
+      if (username !== ADMIN_USER || password !== ADMIN_PASS) {
+        return res.status(401).json({ error: 'Credenciales inválidas' });
+      }
+      const token = jwt.sign({ role: 'admin', user: ADMIN_USER }, JWT_SECRET, { expiresIn: '8h' });
+      res.json({ token, user: ADMIN_USER });
     } catch (err) {
-      console.error('initDB error:', err.message);
+      console.error('login error:', err);
+      res.status(500).json({ error: err.message });
     }
-  }
-  initDB().catch(e => console.error('initDB uncaught:', e.message));
-
-} catch (e) { console.error('pg init:', e.message); }
-
-// Login endpoint
-app.post('/api/admin/login', (req, res) => {
-  const { username, password } = req.body || {};
-  if (!username || !password) return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
-  const ADMIN_USER = process.env.ADMIN_USER || 'iara';
-  const ADMIN_PASS = process.env.ADMIN_PASS || 'pulseras2026';
-  if (username !== ADMIN_USER || password !== ADMIN_PASS) {
-    return res.status(401).json({ error: 'Credenciales inválidas' });
-  }
-  const token = jwt.sign({ role: 'admin', user: ADMIN_USER }, JWT_SECRET, { expiresIn: '8h' });
-  res.json({ token, user: ADMIN_USER });
-});
-
-// Static files (simplified)
-try {
-  const path = require('path');
-  const fs = require('fs');
-  app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-  console.log('static middleware ready');
-} catch (e) { console.error('static error:', e.message); }
+  });
+} catch (e) { console.error('jwt:', e.message); }
 
 if (process.env.VERCEL) {
   module.exports = app;
