@@ -251,6 +251,14 @@
     const passwordToggle = document.getElementById('passwordToggle');
     const loginPass = document.getElementById('loginPass');
 
+    if (window.location.protocol === 'file:') {
+      document.getElementById('loginUser').disabled = true;
+      document.getElementById('loginPass').disabled = true;
+      document.getElementById('passwordToggle').disabled = true;
+      document.querySelector('.login-card button').disabled = true;
+      showToast('Abrí este panel desde el servidor, no como archivo. Usá http://localhost:3000/pages/admin.html o tu URL de Render/Vercel.', 'error');
+    }
+
     if (passwordToggle && loginPass) {
       passwordToggle.addEventListener('click', () => {
         const isPassword = loginPass.type === 'password';
@@ -273,14 +281,20 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Error de autenticación');
+        const contentType = res.headers.get('content-type');
+        const data = contentType && contentType.includes('application/json') ? await res.json() : { error: await res.text() };
+        if (!res.ok) throw new Error(data.error || `Error ${res.status}: ${res.statusText}`);
         authToken = data.token;
         localStorage.setItem('ag_admin_jwt', authToken);
         document.getElementById('loginOverlay').classList.add('hidden');
         showToast(`Bienvenida, ${data.user}`, 'success');
       } catch (err) {
-        showToast(err.message, 'error');
+        console.error('Login error:', err);
+        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('fetch')) {
+          showToast('No se pudo conectar al servidor. Asegurate de estar abriendo el panel desde el servidor (http://localhost:3000/pages/admin.html) y no como archivo.', 'error');
+        } else {
+          showToast(err.message, 'error');
+        }
       }
     }
 

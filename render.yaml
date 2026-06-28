@@ -10,8 +10,8 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
-      - key: ALLOWED_ORIGIN
-        value: https://iara-yrdx.onrender.com
+      - key: ALLOWED_ORIGINS
+        value: https://iara-yrdx.onrender.com,https://iara-eight.vercel.app,https://iara-h5jp7meps-iara3.vercel.app
       - key: ADMIN_USER
         value: iara
       - key: ADMIN_PASS

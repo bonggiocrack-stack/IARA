@@ -18,10 +18,15 @@ const JWT_SECRET = process.env.JWT_SECRET || 'change_me_in_production';
 
 app.use(helmet());
 const allowedOrigin = process.env.ALLOWED_ORIGIN;
-if (!allowedOrigin) {
-  logger.warn('ALLOWED_ORIGIN no configurado; CORS restrictivo deshabilitado temporalmente');
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()) : [];
+if (!allowedOrigin && !allowedOrigins.length) {
+  logger.warn('ALLOWED_ORIGIN/ALLOWED_ORIGINS no configurado; CORS restrictivo deshabilitado temporalmente');
 }
-const corsOptions = allowedOrigin ? { origin: allowedOrigin, credentials: true } : { origin: '*' };
+const corsOptions = allowedOrigins.length
+  ? { origin: allowedOrigins, credentials: true }
+  : allowedOrigin
+    ? { origin: allowedOrigin, credentials: true }
+    : { origin: '*', credentials: true };
 app.use(cors(corsOptions));
 let server;
 
