@@ -774,4 +774,8 @@ server = app.listen(PORT, () => {
   console.log(`Backend escuchando en http://localhost:${PORT}`);
 });
 
+if (process.env.VERCEL) {
+  module.exports = app;
+}
+
 module.exports = { app, close: () => server && server.close() };
