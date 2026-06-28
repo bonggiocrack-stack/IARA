@@ -244,3 +244,19 @@ async function safeFetch(url, opts = {}) {
 }
 
 window.safeFetch = safeFetch;
+
+async function loadSiteTexts() {
+  try {
+    const res = await safeFetch('/api/site-texts');
+    if (!res) return;
+    const data = await res.json();
+    if (data.about_text && document.getElementById('aboutText')) {
+      const el = document.getElementById('aboutText');
+      el.innerHTML = `<p>${data.about_text}</p>`;
+    }
+  } catch (err) {
+    console.error('Error cargando textos del sitio:', err);
+  }
+}
+
+window.loadSiteTexts = loadSiteTexts;

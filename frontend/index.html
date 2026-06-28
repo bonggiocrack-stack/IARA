@@ -239,9 +239,8 @@
       </div>
 
       <div class="about-content">
-        <div class="about-text reveal">
-          <p>En Artesanía Gualeguay creamos piezas únicas que reflejan la riqueza cultural de nuestra región. Cada pulsera, llavero y souvenir es hecho con dedicación y cuidado artesanal.</p>
-          <p>Nuestro compromiso es ofrecer productos de calidad, con un toque personal que hace cada compra especial. Creemos que los regalos artesanales son más significativos porque llevan una historia.</p>
+        <div class="about-text reveal" id="aboutText">
+          <p>Cargando...</p>
         </div>
 
         <div class="about-stats">
@@ -447,6 +446,11 @@
       script.text = JSON.stringify(schema);
       document.head.appendChild(script);
     })();
+  </script>
+  <script>
+    if (typeof loadSiteTexts === 'function') {
+      loadSiteTexts();
+    }
   </script>
 </body>
 </html>
