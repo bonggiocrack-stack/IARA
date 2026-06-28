@@ -10,6 +10,7 @@ backend/node_modules/
 # Uploads
 uploads/
 backend/uploads/
+backend/data/
 
 # Logs
 *.log

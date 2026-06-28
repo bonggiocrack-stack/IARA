@@ -1,5 +1,5 @@
-const { query } = require('../../lib/db');
-const { productSchema } = require('../../lib/validators');
+const { query } = require('../lib/db');
+const { productSchema } = require('../lib/validators');
 
 const getPublicProducts = async (req, res) => {
   try {

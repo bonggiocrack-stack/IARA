@@ -1,4 +1,4 @@
-const { query } = require('../../lib/db');
+const { query } = require('../lib/db');
 
 const getSiteTexts = async (req, res) => {
   try {

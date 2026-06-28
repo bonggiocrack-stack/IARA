@@ -1,4 +1,4 @@
-const { query } = require('../../lib/db');
+const { query } = require('../lib/db');
 
 const getPublicTestimonials = async (req, res) => {
   try {

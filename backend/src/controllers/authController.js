@@ -7,10 +7,14 @@ const login = (req, res) => {
       return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
     }
 
-    const ADMIN_USER = process.env.ADMIN_USER || 'iara';
-    const ADMIN_PASS = process.env.ADMIN_PASS || 'pulseras2026';
-    const EDITOR_USER = process.env.EDITOR_USER || '';
-    const EDITOR_PASS = process.env.EDITOR_PASS || '';
+    const ADMIN_USER = process.env.ADMIN_USER;
+    const ADMIN_PASS = process.env.ADMIN_PASS;
+    const EDITOR_USER = process.env.EDITOR_USER;
+    const EDITOR_PASS = process.env.EDITOR_PASS;
+
+    if (!ADMIN_USER || !ADMIN_PASS) {
+      return res.status(500).json({ error: 'Credenciales de administrador no configuradas en el servidor' });
+    }
 
     let role = null;
     let user = null;
@@ -27,7 +31,10 @@ const login = (req, res) => {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
-    const JWT_SECRET = process.env.JWT_SECRET || 'change_me_in_production';
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(500).json({ error: 'JWT_SECRET no configurado en el servidor' });
+    }
     const token = jwt.sign({ role, user }, JWT_SECRET, { expiresIn: '8h' });
     res.json({ token, user, role });
   } catch (err) {

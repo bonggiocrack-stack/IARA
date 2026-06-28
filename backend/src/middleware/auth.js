@@ -7,7 +7,10 @@ function adminAuth(req, res, next) {
     return res.status(401).json({ error: 'No autorizado' });
   }
   try {
-    const JWT_SECRET = process.env.JWT_SECRET || 'change_me_in_production';
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(500).json({ error: 'JWT_SECRET no configurado en el servidor' });
+    }
     const decoded = jwt.verify(token, JWT_SECRET);
     if (!['admin', 'editor'].includes(decoded.role)) {
       return res.status(401).json({ error: 'No autorizado' });
