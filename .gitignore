@@ -17,6 +17,12 @@ pino*
 .DS_Store
 Thumbs.db
 
+# Archivos temporales
+*.tmp
+*.temp
+iara.db
+*.db
+
 # IDE
 .vscode/
 .idea/
