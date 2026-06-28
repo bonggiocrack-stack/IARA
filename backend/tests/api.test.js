@@ -5,8 +5,7 @@
 const request = require('supertest');
 const path = require('path');
 
-// Mock de DATABASE_URL para tests
-process.env.DATABASE_URL = 'postgresql://mock:mock@localhost:5432/mock';
+// Configuración de entorno para tests
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-secret';
 process.env.ADMIN_USER = 'iara';

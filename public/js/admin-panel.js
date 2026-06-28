@@ -36,8 +36,6 @@ async function checkServerHealth() {
   } finally {
     btn.textContent = 'Ingresar';
     btn.disabled = false;
-  }
-}
 }
 
 const passwordToggle = document.getElementById('passwordToggle');
