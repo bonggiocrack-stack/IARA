@@ -47,6 +47,11 @@ app.post('/api/admin/upload', require('./middleware/auth').adminAuth, handleUplo
 app.use('/uploads', express.static(path.join(__dirname, '..', '..', 'uploads')));
 const staticDir = path.join(__dirname, '..', '..', 'frontend');
 
+app.get('/favicon.ico', (req, res) => {
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.sendFile(path.join(staticDir, 'favicon.svg'));
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
