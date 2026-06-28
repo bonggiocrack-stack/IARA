@@ -1,9 +1,9 @@
 /* ==================== CSS VARIABLES ==================== */
 :root {
-  --rose: #f4b8c8;
-  --rose-dark: #d47090;
-  --rose-light: #fde8ef;
-  --rose-mid: #e8a0b5;
+  --rose: #e8a0b5;
+  --rose-dark: #c47d91;
+  --rose-light: #f5c6d4;
+  --rose-mid: #d47090;
   --cream: #fdf6f8;
   --blush: #fff0f4;
   --text-dark: #3a1f28;
@@ -23,7 +23,7 @@
 
 [data-theme="dark"] {
   --rose: #d47090;
-  --rose-dark: #f4b8c8;
+  --rose-dark: #e8a0b5;
   --rose-light: #3a1f28;
   --rose-mid: #b06078;
   --cream: #1f1418;
