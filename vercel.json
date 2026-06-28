@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "framework": null,
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "ADMIN_USER": "iara",
+    "ADMIN_PASS": "pulseras2026",
+    "DATABASE_URL": "postgresql://neondb_owner:npg_7HOeMptSdmY5@ep-wandering-breeze-adetvf8t-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  }
+}
