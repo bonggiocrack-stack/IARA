@@ -32,9 +32,8 @@ iara.db
 *.swp
 *.swo
 
-# Docker (ignorar local, usar render.yaml)
-Dockerfile
-docker-compose.yml
-
 # Vercel
 .vercel
+
+# Backend local entry point (git uses backend/src/)
+backend/server.js

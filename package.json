@@ -8,8 +8,8 @@
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
     "lint:fix": "eslint frontend/js/ tests/ --ext .js --fix",
     "e2e": "playwright test",
-    "dev": "cd backend && node server.js",
-    "start": "cd backend && node server.js"
+    "dev": "cd backend && npm start",
+    "start": "cd backend && npm start"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

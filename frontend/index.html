@@ -136,7 +136,7 @@
         </div>
         <div class="highlight-text">
           <h4 id="feature2Title">Envío gratis</h4>
-          <p id="feature2Desc">En compras mayores a ARS 2.000</p>
+          <p id="feature2Desc">En compras mayores a ARS 60.000</p>
         </div>
       </div>
       <div class="highlight-item reveal">
@@ -156,6 +156,45 @@
           <h4 id="feature4Title">Para regalar</h4>
           <p id="feature4Desc">Empaques especiales disponibles</p>
         </div>
+      </div>
+    </section>
+
+    <!-- ============== COTIZACIÓN DE ENVÍO ============== -->
+    <section class="shipping-quote" id="shipping-quote">
+      <div class="section-header">
+        <span class="section-tag reveal">Envíos</span>
+        <h2 class="section-title reveal">Cotizá tu envío</h2>
+        <p class="section-subtitle reveal">Elegí automático por código postal o agregá el costo manualmente</p>
+      </div>
+      <div class="shipping-controls reveal">
+        <div class="shipping-tabs">
+          <button class="shipping-tab active" data-mode="auto" id="tabAuto">Automático</button>
+          <button class="shipping-tab" data-mode="manual" id="tabManual">Manual</button>
+        </div>
+        <div class="shipping-panel active" id="panelAuto">
+          <form class="shipping-form" id="shippingAutoForm">
+            <div class="shipping-row">
+              <div class="form-group">
+                <label for="shippingZip">Código Postal</label>
+                <input type="text" id="shippingZip" name="shippingZip" placeholder="Ej: 2820" required />
+              </div>
+              <button type="submit" class="btn-primary">Calcular</button>
+            </div>
+            <p class="shipping-hint">Usamos el código postal para estimar la tarifa de correo a tu localidad.</p>
+            <div class="shipping-result" id="shippingAutoResult"></div>
+          </form>
+        </div>
+        <div class="shipping-panel" id="panelManual">
+          <form class="shipping-form" id="shippingManualForm">
+            <div class="form-group">
+              <label for="shippingCost">Costo del envío (ARS)</label>
+              <input type="number" id="shippingCost" name="shippingCost" placeholder="Ej: 2500" min="0" required />
+            </div>
+            <button type="submit" class="btn-primary">Aplicar</button>
+            <div class="shipping-result" id="shippingManualResult"></div>
+          </form>
+        </div>
+        <div class="shipping-summary" id="shippingSummary"></div>
       </div>
     </section>
 

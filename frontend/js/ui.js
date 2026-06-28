@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductFilters();
   if (typeof updateCartBadge === 'function') updateCartBadge();
   initSakuraInteraction();
+  initShippingQuote();
 });
 
 // Detectar cambios en el carrito (para actualizar badge en tiempo real)
@@ -242,6 +243,99 @@ async function safeFetch(url, opts = {}) {
 }
 
 window.safeFetch = safeFetch;
+
+// Shipping Quote Module
+function initShippingQuote() {
+  const tabAuto = document.getElementById('tabAuto');
+  const tabManual = document.getElementById('tabManual');
+  const panelAuto = document.getElementById('panelAuto');
+  const panelManual = document.getElementById('panelManual');
+  const autoForm = document.getElementById('shippingAutoForm');
+  const manualForm = document.getElementById('shippingManualForm');
+  const autoResult = document.getElementById('shippingAutoResult');
+  const manualResult = document.getElementById('shippingManualResult');
+  const summary = document.getElementById('shippingSummary');
+
+  if (!tabAuto || !tabManual) return;
+
+  function switchTab(mode) {
+    tabAuto.classList.toggle('active', mode === 'auto');
+    tabManual.classList.toggle('active', mode === 'manual');
+    panelAuto.classList.toggle('active', mode === 'auto');
+    panelManual.classList.toggle('active', mode === 'manual');
+  }
+
+  tabAuto.addEventListener('click', () => switchTab('auto'));
+  tabManual.addEventListener('click', () => switchTab('manual'));
+
+  if (autoForm) {
+    autoForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const zip = document.getElementById('shippingZip').value.trim();
+      if (!zip) {
+        showToast('', 'Ingresa tu código postal', 'error');
+        return;
+      }
+
+      const quote = estimateShipping(zip);
+      showShippingResult(autoResult, quote, zip);
+      updateSummary(quote);
+    });
+  }
+
+  if (manualForm) {
+    manualForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const costInput = document.getElementById('shippingCost').value.trim();
+      const cost = parseFloat(costInput);
+
+      if (isNaN(cost) || cost < 0) {
+        showToast('', 'Ingresa un costo válido', 'error');
+        return;
+      }
+
+      const result = { manual: true, cost };
+      showShippingResult(manualResult, result);
+      updateSummary(result);
+    });
+  }
+
+  function estimateShipping(zip) {
+    const base = 1500;
+    const modifiers = {
+      '1': 2200, '2': 1900, '3': 2100, '4': 2000,
+      '5': 2500, '6': 1800, '7': 2300, '8': 2600,
+      '9': 2400
+    };
+    const firstDigit = zip.charAt(0);
+    const rate = modifiers[firstDigit] || 2000;
+    return { auto: true, rate, total: base + rate, zip };
+  }
+
+  function showShippingResult(container, data, zip) {
+    if (!container) return;
+    let html = '';
+    if (data.auto && zip) {
+      html = `Cotización automática para CP <strong>${zip}</strong>: <strong>ARS ${data.total.toLocaleString('es-AR')}</strong> (Base ${data.rate.toLocaleString('es-AR')})`;
+    } else if (data.manual) {
+      html = `Costo de envío manual: <strong>ARS ${data.cost.toLocaleString('es-AR')}</strong>`;
+    }
+    container.innerHTML = html;
+    container.classList.add('visible');
+  }
+
+  function updateSummary(data) {
+    if (!summary) return;
+    let text = '';
+    if (data.auto) {
+      text = `Envío automático - CP ${data.zip}: <strong>ARS ${data.total.toLocaleString('es-AR')}</strong>`;
+    } else if (data.manual) {
+      text = `Envío manual: <strong>ARS ${data.cost.toLocaleString('es-AR')}</strong>`;
+    }
+    summary.innerHTML = text;
+    summary.classList.add('visible');
+  }
+}
 
 async function loadSiteTexts() {
   try {

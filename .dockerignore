@@ -1,4 +1,0 @@
-# Ignorar Dockerfile para Render (usa Node.js build)
-Dockerfile
-docker-compose.yml
-.dockerignore
