@@ -53,6 +53,7 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 
@@ -62,6 +63,7 @@ app.get('/*', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'Not Found' });
   }
+  res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 
