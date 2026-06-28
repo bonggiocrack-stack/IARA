@@ -58,6 +58,12 @@ app.post('/api/admin/upload', require('./middleware/auth').adminAuth, handleUplo
 app.use('/uploads', express.static(path.join(__dirname, '..', '..', 'uploads')));
 const staticDir = path.join(__dirname, '..', '..', 'frontend');
 
+app.use('/css', express.static(path.join(staticDir, 'css')));
+app.use('/js', express.static(path.join(staticDir, 'js')));
+app.use('/uploads', express.static(path.join(staticDir, 'uploads')));
+app.use('/pages', express.static(path.join(staticDir, 'pages')));
+app.use(express.static(staticDir));
+
 app.get('/favicon.ico', (req, res) => {
   res.setHeader('Content-Type', 'image/svg+xml');
   res.sendFile(path.join(staticDir, 'favicon.svg'));
@@ -67,8 +73,6 @@ app.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(staticDir, 'index.html'));
 });
-
-app.use(express.static(staticDir));
 
 app.get('/*', (req, res) => {
   if (req.path.startsWith('/api/')) {
