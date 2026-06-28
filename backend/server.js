@@ -9,6 +9,13 @@ const fs = require('fs');
 const pino = require('pino');
 const { Pool } = require('pg');
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 dotenv.config();
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
