@@ -23,9 +23,20 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.ALLOWED_ORIGIN || '').split(',').filter(Boolean);
-const corsOptions = allowedOrigins.length
-  ? { origin: allowedOrigins, credentials: true, methods: ['GET','POST','PUT','DELETE','OPTIONS'], allowedHeaders: ['Content-Type','Authorization'] }
-  : { origin: '*', credentials: true };
+const normalize = (o) => o.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, origin);
+    const normalized = normalize(origin);
+    const allowed = allowedOrigins.find(o => normalized === normalize(o) || normalized.endsWith('.' + normalize(o)));
+    if (allowed) return callback(null, origin);
+    return callback(new Error('Origin not allowed'));
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+};
 app.use(cors(corsOptions));
 
 // Health check & keep-alive

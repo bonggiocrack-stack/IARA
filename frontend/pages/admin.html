@@ -267,12 +267,7 @@
 
   <script src="../js/config.js"></script>
   <script>
-    const API_BASE = (() => {
-      const host = window.location.host;
-      if (host.includes('vercel.app')) return 'https://iara-os3h.onrender.com';
-      if (host.includes('onrender.com')) return '/';
-      return '/';
-    })();
+    const API_BASE = 'https://iara-os3h.onrender.com';
     let authToken = localStorage.getItem('ag_admin_jwt') || '';
     let userRole = localStorage.getItem('ag_admin_role') || 'admin';
     let currentSection = 'products';
