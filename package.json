@@ -1,13 +1,15 @@
 {
-  "name": "artesania-gualeguay-tests",
+  "name": "artesania-gualeguay",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "jest --config jest.config.js --testEnvironment jsdom",
-    "lint": "eslint js/ tests/ --ext .js",
+    "test": "jest --config tests/unit/jest.config.js --testEnvironment jsdom",
+    "lint": "eslint frontend/js/ tests/ --ext .js",
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
-    "lint:fix": "eslint js/ tests/ --ext .js --fix",
-    "e2e": "playwright test"
+    "lint:fix": "eslint frontend/js/ tests/ --ext .js --fix",
+    "e2e": "playwright test",
+    "dev": "cd backend/src && node server.js",
+    "start": "cd backend/src && node server.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

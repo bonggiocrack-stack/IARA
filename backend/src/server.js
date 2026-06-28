@@ -152,14 +152,14 @@ app.post('/api/admin/upload', adminAuth, (req, res) => {
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-const staticDir = path.join(__dirname, '..');
+const staticDir = path.join(__dirname, '..', '..', 'frontend');
 
 // Serve index.html at root
 app.get('/', (req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 
-// Serve all other static files
+// Serve all other static files from frontend
 app.use(express.static(staticDir));
 
 // SPA fallback: serve index.html for any non-API route

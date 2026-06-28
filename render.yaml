@@ -4,14 +4,14 @@ services:
     env: node
     plan: free
     buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    startCommand: cd backend/src && node server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
         generateValue: true
       - key: ALLOWED_ORIGINS
-        value: https://iara-yrdx.onrender.com,https://iara-eight.vercel.app,https://iara-h5jp7meps-iara3.vercel.app
+        value: https://iara-yrdx.onrender.com,https://iara-eight.vercel.app
       - key: ADMIN_USER
         value: iara
       - key: ADMIN_PASS
