@@ -106,7 +106,8 @@ app.delete('/api/admin/products/:id', adminAuth, (req, res) => {
 // Site texts (in-memory)
 let siteTexts = {
   hero_title: 'Regalos artesanales que cuentan historias',
-  hero_subtitle: 'Hecho a mano con amor en Gualeguay'
+  hero_subtitle: 'Hecho a mano con amor en Gualeguay',
+  about_text: 'En Artesanía Gualeguay creamos piezas únicas que reflejan la riqueza cultural de nuestra región. Cada pulsera, llavero y souvenir es hecho con dedicación y cuidado artesanal. Nuestro compromiso es ofrecer productos de calidad, con un toque personal que hace cada compra especial. Creemos que los regalos artesanales son más significativos porque llevan una historia.'
 };
 app.get('/api/site-texts', (req, res) => res.json(siteTexts));
 app.get('/api/admin/site-texts', adminAuth, (req, res) => res.json(siteTexts));
