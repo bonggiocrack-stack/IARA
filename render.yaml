@@ -1,7 +1,7 @@
 services:
   - type: web
     name: iara-backend
-    environment: "node"
+    env: node
     plan: free
     buildCommand: cd backend && npm install
     startCommand: cd backend/src && node server.js
