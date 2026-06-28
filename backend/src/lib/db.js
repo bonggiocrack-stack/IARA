@@ -108,6 +108,26 @@ async function initDB() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
     console.log('Tablas de base de datos inicializadas (SQLite)');
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('about_text', 'Cada pieza es artesanal y única, hecha con amor y dedicación en Gualeguay, Entre Ríos.')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_1_title', 'Hecho a mano')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_1_desc', 'Cada pieza es artesanal y única')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_2_title', 'Envío gratis')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_2_desc', 'En compras mayores a ARS 60.000')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_3_title', 'Materiales premium')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_3_desc', 'Seleccionados con cuidado')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_4_title', 'Para regalar')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('feature_4_desc', 'Empaques especiales disponibles')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_subtitle', 'Cinco pasos simples para comprar tu artesanía')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_1_title', '1) Elegí productos')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_1_desc', 'Filtrá por categoría y elegí tu pieza del catálogo.')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_2_title', '2) Sumá al carrito')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_2_desc', 'Presioná "Agregar" para guardar tu selección.')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_3_title', '3) Revisá el carrito')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_3_desc', 'Verificá cantidad, subtotal y total antes de pagar.')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_4_title', '4) Pagá con MercadoPago')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_4_desc', 'Ingresás al checkout para completar el pago de forma segura.')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_5_title', '5) Confirmación')`);
+    await query(`INSERT OR IGNORE INTO site_texts (key, value) VALUES ('process_step_5_desc', 'Al finalizar, vas a ver el comprobante en pantalla.')`);
     return;
   }
 
@@ -129,6 +149,35 @@ async function initDB() {
   }
 
   console.log('Tablas de base de datos inicializadas (PostgreSQL)');
+  const seeds = [
+    ['about_text', 'Cada pieza es artesanal y única, hecha con amor y dedicación en Gualeguay, Entre Ríos.'],
+    ['feature_1_title', 'Hecho a mano'],
+    ['feature_1_desc', 'Cada pieza es artesanal y única'],
+    ['feature_2_title', 'Envío gratis'],
+    ['feature_2_desc', 'En compras mayores a ARS 60.000'],
+    ['feature_3_title', 'Materiales premium'],
+    ['feature_3_desc', 'Seleccionados con cuidado'],
+    ['feature_4_title', 'Para regalar'],
+    ['feature_4_desc', 'Empaques especiales disponibles'],
+    ['process_subtitle', 'Cinco pasos simples para comprar tu artesanía'],
+    ['process_step_1_title', '1) Elegí productos'],
+    ['process_step_1_desc', 'Filtrá por categoría y elegí tu pieza del catálogo.'],
+    ['process_step_2_title', '2) Sumá al carrito'],
+    ['process_step_2_desc', 'Presioná "Agregar" para guardar tu selección.'],
+    ['process_step_3_title', '3) Revisá el carrito'],
+    ['process_step_3_desc', 'Verificá cantidad, subtotal y total antes de pagar.'],
+    ['process_step_4_title', '4) Pagá con MercadoPago'],
+    ['process_step_4_desc', 'Ingresás al checkout para completar el pago de forma segura.'],
+    ['process_step_5_title', '5) Confirmación'],
+    ['process_step_5_desc', 'Al finalizar, vas a ver el comprobante en pantalla.']
+  ];
+  for (const [key, value] of seeds) {
+    try {
+      await query('INSERT INTO site_texts (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [key, value]);
+    } catch (err) {
+      console.error('Error seed site_texts:', err.message);
+    }
+  }
 }
 
 module.exports = { query, initDB, pool, connectionString: !!connectionString };
