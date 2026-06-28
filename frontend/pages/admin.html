@@ -44,6 +44,7 @@
     </div>
     <nav class="sidebar-nav">
       <a href="#products" class="active" data-section="products">📦 Productos</a>
+      <a href="#orders" data-section="orders">🧾 Pedidos</a>
       <a href="#testimonials" data-section="testimonials">💬 Testimonios</a>
       <a href="#texts" data-section="texts">📝 Textos del Sitio</a>
     </nav>
@@ -80,6 +81,30 @@
           </thead>
           <tbody id="tableBody">
             <tr><td colspan="5" class="empty-state">Cargando productos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="ordersSection" style="display:none;">
+      <div class="card-header">
+        <h3 class="card-header-title">Pedidos</h3>
+        <input type="text" id="orderSearchInput" placeholder="Buscar pedido..." class="card-search" oninput="renderOrdersTable()" />
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="6" class="empty-state">Cargando pedidos...</td></tr>
           </tbody>
         </table>
       </div>
@@ -231,6 +256,7 @@
     let authToken = localStorage.getItem('ag_admin_jwt') || '';
     let currentSection = 'products';
     let products = [];
+    let orders = [];
     let testimonials = [];
     let siteTexts = {};
     let editingId = null;
@@ -360,10 +386,12 @@
       document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
       document.querySelector(`.sidebar-nav a[data-section="${section}"]`)?.classList.add('active');
       document.getElementById('productsSection').style.display = section === 'products' ? 'block' : 'none';
+      document.getElementById('ordersSection').style.display = section === 'orders' ? 'block' : 'none';
       document.getElementById('testimonialsSection').style.display = section === 'testimonials' ? 'block' : 'none';
       document.getElementById('textsSection').style.display = section === 'texts' ? 'block' : 'none';
       const titles = {
         products: ['Productos', 'Gestioná productos, fotos y precios', '+ Nuevo Producto'],
+        orders: ['Pedidos', 'Gestioná pedidos y pagos', ''],
         testimonials: ['Testimonios', 'Gestioná testimonios de clientes', '+ Nuevo Testimonio'],
         texts: ['Textos del Sitio', 'Modificá los textos que aparecen en el sitio', '+ Nuevo Texto']
       };
@@ -372,6 +400,7 @@
       document.getElementById('sectionSubtitle').textContent = subtitle;
       document.getElementById('sectionAction').textContent = action;
       if (section === 'products') loadProducts();
+      if (section === 'orders') loadOrders();
       if (section === 'testimonials') loadTestimonials();
       if (section === 'texts') loadSiteTexts();
     }
@@ -429,6 +458,56 @@
           </td>
         </tr>
       `).join('');
+    }
+
+    async function loadOrders() {
+      try {
+        const res = await adminFetch('/api/admin/orders');
+        orders = await res.json();
+        renderOrdersTable();
+      } catch (err) {
+        document.getElementById('ordersTableBody').innerHTML = `<tr><td colspan="6" class="empty-state">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderOrdersTable() {
+      const q = (document.getElementById('orderSearchInput')?.value || '').toLowerCase();
+      const filtered = orders.filter(o => {
+        const customer = o.customer || {};
+        const text = `${o.id} ${customer.name || ''} ${customer.email || ''} ${o.status}`.toLowerCase();
+        return text.includes(q);
+      });
+      const tbody = document.getElementById('ordersTableBody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state"><h3>Sin pedidos</h3><p>No se encontraron pedidos.</p></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = filtered.map(o => {
+        const customer = o.customer || {};
+        return `
+          <tr>
+            <td><strong>#${o.id}</strong></td>
+            <td>${customer.name || 'Sin nombre'}<br/><small>${customer.email || ''}</small></td>
+            <td>$${Number(o.total).toLocaleString('es-AR')}</td>
+            <td><span class="badge badge-${o.status === 'approved' ? 'approved' : o.status === 'pending' ? 'pending' : 'rejected'}">${o.status || 'pending'}</span></td>
+            <td>${o.created_at ? new Date(o.created_at).toLocaleDateString('es-AR') : '—'}</td>
+            <td>
+              <div class="actions">
+                <button class="btn btn-secondary btn-sm" onclick="viewOrder(${o.id})">👁 Ver</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function viewOrder(id) {
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+      const customer = order.customer || {};
+      const items = Array.isArray(order.items) ? order.items : [];
+      const itemsText = items.map((it, i) => `${i + 1}. ${it.name || 'Producto'} x${it.quantity || 1} — $${Number(it.price || 0).toLocaleString('es-AR')}`).join('\n');
+      alert(`Pedido #${order.id}\n\nCliente: ${customer.name || '—'}\nEmail: ${customer.email || '—'}\nTeléfono: ${customer.phone || '—'}\nDirección: ${customer.address || '—'}\n\nItems:\n${itemsText}\n\nTotal: $${Number(order.total).toLocaleString('es-AR')}\nEstado: ${order.status || 'pending'}\nMercadoPago ID: ${order.mercadopago_id || '—'}`);
     }
 
     async function loadTestimonials() {
