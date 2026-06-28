@@ -1,0 +1,54 @@
+const { z } = require('zod');
+
+const productSchema = z.object({
+  name: z.string().min(1, 'Nombre es requerido').max(200),
+  category: z.string().default('pulseras'),
+  price: z.number().positive('Precio debe ser mayor a 0'),
+  description: z.string().max(2000).optional().default(''),
+  emoji: z.string().max(10).optional().default('📿'),
+  image: z.string().url('URL de imagen inválida').optional().or(z.literal('')).default(''),
+  badge: z.string().max(50).optional().default(''),
+  stock: z.number().int().nonnegative().optional().default(0)
+});
+
+const testimonialSchema = z.object({
+  name: z.string().min(1, 'Nombre es requerido').max(100),
+  comment: z.string().min(1, 'Comentario es requerido').max(1000),
+  rating: z.number().int().min(1).max(5).default(5),
+  image: z.string().optional().default(''),
+  active: z.boolean().default(true)
+});
+
+const siteTextSchema = z.object({
+  key: z.string().min(1, 'Clave es requerida').max(100),
+  value: z.string().max(5000)
+});
+
+const orderSchema = z.object({
+  items: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    price: z.number(),
+    quantity: z.number().int().positive()
+  })).min(1, 'Items son requeridos'),
+  total: z.number().positive('Total debe ser mayor a 0'),
+  customer: z.object({
+    name: z.string().optional(),
+    email: z.string().email().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional()
+  }).optional().default({})
+});
+
+const loginSchema = z.object({
+  username: z.string().min(1, 'Usuario es requerido'),
+  password: z.string().min(1, 'Contraseña es requerida')
+});
+
+module.exports = {
+  productSchema,
+  testimonialSchema,
+  siteTextSchema,
+  orderSchema,
+  loginSchema
+};

@@ -1,4 +1,5 @@
 const { query } = require('../../lib/db');
+const { productSchema } = require('../../lib/validators');
 
 const getPublicProducts = async (req, res) => {
   try {
@@ -21,15 +22,17 @@ const getAdminProducts = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
-  const { name, category, price, description, emoji, image, badge, stock = 0 } = req.body || {};
-  if (!name || !price) return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
   try {
+    const data = productSchema.parse(req.body);
     const result = await query(
       'INSERT INTO products (name, category, price, description, emoji, image, badge, stock) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [name, category || 'pulseras', Number(price), description || '', emoji || '📿', image || '', badge || '', Number(stock)]
+      [data.name, data.category, Number(data.price), data.description || '', data.emoji || '📿', data.image || '', data.badge || '', Number(data.stock)]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    if (err.name === 'ZodError') {
+      return res.status(400).json({ error: err.errors[0]?.message || 'Datos inválidos' });
+    }
     console.error('Error creando producto:', err);
     res.status(500).json({ error: err.message });
   }
@@ -37,17 +40,20 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const id = Number(req.params.id);
-  const updates = req.body || {};
-  const fields = Object.keys(updates).filter(k => k !== 'id');
-  if (!fields.length) return res.status(400).json({ error: 'Sin datos para actualizar' });
-  const setClause = fields.map((_, i) => `${fields[i]} = $${i + 1}`).join(', ');
-  const values = fields.map(f => (['price', 'stock'].includes(f) ? Number(updates[f]) : updates[f]));
-  values.push(id);
   try {
+    const data = productSchema.partial().parse(req.body);
+    const fields = Object.keys(data);
+    if (!fields.length) return res.status(400).json({ error: 'Sin datos para actualizar' });
+    const setClause = fields.map((_, i) => `${fields[i]} = $${i + 1}`).join(', ');
+    const values = fields.map(f => (['price', 'stock'].includes(f) ? Number(data[f]) : data[f]));
+    values.push(id);
     const result = await query(`UPDATE products SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = $${values.length} RETURNING *`, values);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Producto no encontrado' });
     res.json(result.rows[0]);
   } catch (err) {
+    if (err.name === 'ZodError') {
+      return res.status(400).json({ error: err.errors[0]?.message || 'Datos inválidos' });
+    }
     console.error('Error actualizando producto:', err);
     res.status(500).json({ error: err.message });
   }

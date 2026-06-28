@@ -9,7 +9,7 @@ function adminAuth(req, res, next) {
   try {
     const JWT_SECRET = process.env.JWT_SECRET || 'change_me_in_production';
     const decoded = jwt.verify(token, JWT_SECRET);
-    if (decoded.role !== 'admin') {
+    if (!['admin', 'editor'].includes(decoded.role)) {
       return res.status(401).json({ error: 'No autorizado' });
     }
     req.user = decoded;
@@ -19,4 +19,11 @@ function adminAuth(req, res, next) {
   }
 }
 
-module.exports = { adminAuth };
+function adminOnly(req, res, next) {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ error: 'Solo administradores' });
+  }
+  next();
+}
+
+module.exports = { adminAuth, adminOnly };

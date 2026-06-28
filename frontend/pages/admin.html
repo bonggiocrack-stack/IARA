@@ -254,6 +254,7 @@
   <script>
     const API_BASE = '/';
     let authToken = localStorage.getItem('ag_admin_jwt') || '';
+    let userRole = localStorage.getItem('ag_admin_role') || 'admin';
     let currentSection = 'products';
     let products = [];
     let orders = [];
