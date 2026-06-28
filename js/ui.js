@@ -1,0 +1,246 @@
+/* ==================== UI.JS ==================== */
+
+// Toast Notification System
+function showToast(icon, message, type = 'default') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'slideInRight 0.3s ease forwards';
+  }, 10);
+
+  setTimeout(() => {
+    toast.style.animation = 'slideOutRight 0.3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, CONFIG.ANIMATIONS.TOAST_DURATION);
+}
+
+// Reveal Animation on Scroll
+function initRevealAnimation() {
+  const revealElements = document.querySelectorAll('.reveal');
+
+  window.revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: CONFIG.ANIMATIONS.REVEAL_THRESHOLD,
+    rootMargin: '0px 0px -100px 0px'
+  });
+
+  revealElements.forEach(el => window.revealObserver.observe(el));
+}
+
+// Navbar Scroll Effect
+function initNavbarScroll() {
+  const navbar = document.getElementById('navbar');
+  if (!navbar) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+}
+
+// Mobile Navbar Toggle
+function initMobileNavbar() {
+  const toggle = document.getElementById('navbarToggle');
+  const menu = document.getElementById('navbarMenu');
+
+  if (!toggle || !menu) return;
+
+  toggle.addEventListener('click', () => {
+    menu.classList.toggle('active');
+    toggle.setAttribute('aria-expanded', menu.classList.contains('active'));
+  });
+
+  menu.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.navbar-menu') && !e.target.closest('.navbar-toggle')) {
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+// Contact Form Handler
+function initContactForm() {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+
+    if (!name || !email || !message) {
+      showToast('', 'Por favor completa todos los campos', 'error');
+      return;
+    }
+
+    const whatsappMessage = `Nuevo mensaje de contacto\n\nNombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`;
+
+    showToast('', 'Mensaje enviado con éxito. Nos pondremos en contacto pronto.', 'success');
+    form.reset();
+
+    window.open(getWhatsAppLink(whatsappMessage), '_blank');
+  });
+}
+
+// Newsletter Form Handler
+function initNewsletterForm() {
+  const form = document.getElementById('newsletterForm');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = form.querySelector('input[type="email"]').value;
+
+    if (!email) {
+      showToast('', 'Por favor ingresa tu email', 'error');
+      return;
+    }
+
+    showToast('', 'Te has suscrito al newsletter. ¡Gracias!', 'success');
+    form.reset();
+  });
+}
+
+// Smooth Scroll for Anchor Links
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+}
+
+// Filter Products
+function initProductFilters() {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  if (filterButtons.length === 0) return;
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+
+      const category = e.target.dataset.filter;
+
+      if (typeof renderProducts === 'function') {
+        if (category === 'all') {
+          renderProducts(getProducts());
+        } else {
+          renderProducts(getProductsByCategory(category));
+        }
+      }
+
+      const catalog = document.querySelector('.catalog');
+      if (catalog) {
+        catalog.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+}
+
+// Update Cart Count Badge (definido en cart.js)
+
+// Función para agregar producto y actualizar badge
+window.addToCartAndUpdate = function (product) {
+  addToCart(product);
+  updateCartBadge();
+};
+
+// Sakura interaction (Hero)
+function initSakuraInteraction() {
+  const sakura = document.getElementById('sakura');
+  if (!sakura) return;
+
+  document.addEventListener('mousemove', (e) => {
+    const { clientX, clientY } = e;
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const rotateX = (clientY - centerY) / 20;
+    const rotateY = (centerX - clientX) / 20;
+
+    sakura.style.transform = `perspective(500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+}
+
+// Initialize Everything on DOM Ready
+document.addEventListener('DOMContentLoaded', () => {
+  initRevealAnimation();
+  initNavbarScroll();
+  initMobileNavbar();
+  initContactForm();
+  initNewsletterForm();
+  initSmoothScroll();
+  initProductFilters();
+  updateCartBadge();
+  initSakuraInteraction();
+});
+
+// Detectar cambios en el carrito (para actualizar badge en tiempo real)
+window.addEventListener('storage', (e) => {
+  if (e.key === CONFIG.CART.STORAGE_KEY) {
+    updateCartBadge();
+  }
+});
+
+// Catch global de errores fetch para no romper la app
+window.addEventListener('unhandledrejection', (event) => {
+  const reason = event.reason;
+  if (reason && typeof reason === 'object' && reason.message) {
+    console.error('Error no capturado:', reason.message);
+  }
+});
+
+// Si hay error 404 en fetch, redirigir a página 404
+async function safeFetch(url, opts = {}) {
+  try {
+    const res = await fetch(url, opts);
+    if (res.status === 404) {
+      window.location.href = 'pages/404.html';
+      return null;
+    }
+    return res;
+  } catch (err) {
+    console.error('Fetch error:', err);
+    showToast('', 'Error de conexión. Verificá tu internet.', 'error');
+    return null;
+  }
+}
+
+window.safeFetch = safeFetch;

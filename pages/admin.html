@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin | Artesanía Gualeguay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <h2>🌸 Artesanía Admin</h2>
+      <p>Iniciá sesión para continuar</p>
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" id="loginUser" placeholder="Usuario" autocomplete="username" />
+      </div>
+      <div class="form-group password-group">
+        <label>Contraseña</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()" />
+          <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar contraseña">
+            <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Ingresar</button>
+    </div>
+  </div>
+
+  <aside class="sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <span>🌸</span>
+      <span>Artesanía Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#products" class="active" data-section="products">📦 Productos</a>
+      <a href="#testimonials" data-section="testimonials">💬 Testimonios</a>
+      <a href="#texts" data-section="texts">📝 Textos del Sitio</a>
+      <a href="#orders" onclick="showToast('Próximamente', 'Órdenes')">🧾 Órdenes</a>
+      <a href="#settings" onclick="showToast('Próximamente', 'Configuración')">⚙️ Configuración</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="../index.html" target="_blank" class="btn btn-secondary btn-full">← Ver sitio</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <div>
+        <h1 id="sectionTitle">Productos</h1>
+        <p class="header-subtitle" id="sectionSubtitle">Gestioná productos, fotos y precios</p>
+      </div>
+      <button class="btn btn-primary" id="sectionAction" onclick="openSectionModal()">+ Nuevo Producto</button>
+    </div>
+
+    <div class="card" id="productsSection">
+      <div class="card-header">
+        <h3 class="card-header-title">Catálogo de productos</h3>
+        <input type="text" id="searchInput" placeholder="Buscar..." class="card-search" oninput="renderProductsTable()" />
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Imagen</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="5" class="empty-state">Cargando productos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="testimonialsSection" style="display:none;">
+      <div class="card-header">
+        <h3 class="card-header-title">Testimonios de clientes</h3>
+        <button class="btn btn-primary" onclick="openTestimonialModal()">+ Nuevo Testimonio</button>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Comentario</th>
+              <th>Valoración</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="testimonialsTableBody">
+            <tr><td colspan="5" class="empty-state">Cargando testimonios...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="textsSection" style="display:none;">
+      <div class="card-header">
+        <h3 class="card-header-title">Textos del sitio</h3>
+        <button class="btn btn-primary" onclick="openTextModal()">+ Nuevo Texto</button>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Clave</th>
+              <th>Valor</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="textsTableBody">
+            <tr><td colspan="3" class="empty-state">Cargando textos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Nuevo Producto</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Título</label>
+          <input type="text" id="pName" placeholder="Nombre del producto" />
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="pCategory">
+              <option value="pulseras">Pulseras</option>
+              <option value="accesorios">Accesorios</option>
+              <option value="souvenirs">Souvenirs</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Precio ($)</label>
+            <input type="number" id="pPrice" placeholder="0" min="0" step="1" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="pDesc" rows="3" placeholder="Descripción corta del producto"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Emoji de fallback</label>
+          <input type="text" id="pEmoji" placeholder="📿" maxlength="4" />
+        </div>
+        <div class="form-group">
+          <label>Imagen del producto</label>
+          <label class="image-upload" for="pImageInput" id="dropZone">
+            <input type="file" id="pImageInput" accept="image/*" onchange="previewImage(this)" />
+            <span id="uploadLabel">Hacé clic o arrastrá la imagen aquí</span>
+            <img id="imagePreview" class="image-preview" style="display:none;" alt="Vista previa" />
+          </label>
+          <p class="form-hint">Formatos: JPG, PNG, WebP, GIF. Máx 5MB.</p>
+        </div>
+        <input type="hidden" id="pImage" />
+        <input type="hidden" id="pId" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveProduct()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="testimonialModalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="testimonialModalTitle">Nuevo Testimonio</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeTestimonialModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nombre del cliente</label>
+          <input type="text" id="tName" placeholder="Nombre" />
+        </div>
+        <div class="form-group">
+          <label>Comentario</label>
+          <textarea id="tComment" rows="3" placeholder="Comentario del cliente"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Valoración (1-5)</label>
+          <input type="number" id="tRating" placeholder="5" min="1" max="5" value="5" />
+        </div>
+        <div class="form-group">
+          <label>URL de imagen (opcional)</label>
+          <input type="text" id="tImage" placeholder="https://..." />
+        </div>
+        <input type="hidden" id="tId" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeTestimonialModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveTestimonial()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="textModalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="textModalTitle">Editar Texto</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeTextModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Clave</label>
+          <input type="text" id="textKey" placeholder="hero_title" disabled />
+        </div>
+        <div class="form-group">
+          <label>Valor</label>
+          <textarea id="textValue" rows="3" placeholder="Texto del sitio"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeTextModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveText()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../js/config.js"></script>
+  <script>
+    let authToken = localStorage.getItem('ag_admin_jwt') || '';
+    let currentSection = 'products';
+    let products = [];
+    let testimonials = [];
+    let siteTexts = {};
+    let editingId = null;
+
+    const passwordToggle = document.getElementById('passwordToggle');
+    const loginPass = document.getElementById('loginPass');
+
+    if (passwordToggle && loginPass) {
+      passwordToggle.addEventListener('click', () => {
+        const isPassword = loginPass.type === 'password';
+        loginPass.type = isPassword ? 'text' : 'password';
+        passwordToggle.classList.toggle('showing', isPassword);
+        passwordToggle.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+      });
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value;
+      if (!username || !password) {
+        showToast('Ingresá usuario y contraseña', 'error');
+        return;
+      }
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error de autenticación');
+        authToken = data.token;
+        localStorage.setItem('ag_admin_jwt', authToken);
+        document.getElementById('loginOverlay').classList.add('hidden');
+        showToast(`Bienvenida, ${data.user}`, 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function adminFetch(url, opts = {}) {
+      if (!authToken) throw new Error('No autorizado');
+      const headers = { Authorization: `Bearer ${authToken}`, ...(opts.headers || {}) };
+      const res = await fetch(url, { ...opts, headers });
+      if (res.status === 401) {
+        authToken = '';
+        localStorage.removeItem('ag_admin_jwt');
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        throw new Error('Sesión expirada');
+      }
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || res.statusText);
+      }
+      return res;
+    }
+
+    function showToast(message, type = 'default') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    function navigateTo(section) {
+      currentSection = section;
+      document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+      document.querySelector(`.sidebar-nav a[data-section="${section}"]`)?.classList.add('active');
+
+      document.getElementById('productsSection').style.display = section === 'products' ? 'block' : 'none';
+      document.getElementById('testimonialsSection').style.display = section === 'testimonials' ? 'block' : 'none';
+      document.getElementById('textsSection').style.display = section === 'texts' ? 'block' : 'none';
+
+      const titles = {
+        products: ['Productos', 'Gestioná productos, fotos y precios', '+ Nuevo Producto'],
+        testimonials: ['Testimonios', 'Gestioná testimonios de clientes', '+ Nuevo Testimonio'],
+        texts: ['Textos del Sitio', 'Modificá los textos que aparecen en el sitio', '+ Nuevo Texto']
+      };
+      const [title, subtitle, action] = titles[section] || titles.products;
+      document.getElementById('sectionTitle').textContent = title;
+      document.getElementById('sectionSubtitle').textContent = subtitle;
+      document.getElementById('sectionAction').textContent = action;
+
+      if (section === 'products') loadProducts();
+      if (section === 'testimonials') loadTestimonials();
+      if (section === 'texts') loadSiteTexts();
+    }
+
+    function openSectionModal() {
+      if (currentSection === 'products') openModal();
+      if (currentSection === 'testimonials') openTestimonialModal();
+      if (currentSection === 'texts') openTextModal();
+    }
+
+    document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.getAttribute('data-section');
+        navigateTo(section);
+      });
+    });
+
+    async function loadProducts() {
+      try {
+        const res = await fetch('/api/products');
+        products = await res.json();
+        renderProductsTable();
+      } catch (err) {
+        document.getElementById('tableBody').innerHTML = `<tr><td colspan="5" class="empty-state">Error al cargar productos: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderProductsTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = products.filter(p => (p.name + ' ' + p.description + ' ' + p.category).toLowerCase().includes(q));
+      const tbody = document.getElementById('tableBody');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><h3>Sin resultados</h3><p>No se encontraron productos.</p></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => `
+        <tr>
+          <td>
+            <div class="product-cell">
+              <div class="thumb">${p.image ? `<img src="${p.image}" alt="${p.name}" />` : (p.emoji || '📿')}</div>
+              <div>
+                <div class="product-name">${p.name}</div>
+                <div class="product-desc">${p.description}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-${p.category}">${p.category}</span></td>
+          <td><span class="price-cell">${formatARS(Number(p.price))}</span></td>
+          <td>${p.image ? '📷' : '—'}</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})">✏️ Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadTestimonials() {
+      try {
+        const res = await adminFetch('/api/admin/testimonials');
+        testimonials = await res.json();
+        renderTestimonialsTable();
+      } catch (err) {
+        document.getElementById('testimonialsTableBody').innerHTML = `<tr><td colspan="5" class="empty-state">Error al cargar testimonios: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderTestimonialsTable() {
+      const tbody = document.getElementById('testimonialsTableBody');
+      if (testimonials.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><h3>Sin testimonios</h3><p>Agregá el primero.</p></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = testimonials.map(t => `
+        <tr>
+          <td><strong>${t.name}</strong></td>
+          <td>${t.comment}</td>
+          <td>${'⭐'.repeat(t.rating)}</td>
+          <td>${t.active ? '✅ Activo' : '❌ Inactivo'}</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-secondary btn-sm" onclick="editTestimonial(${t.id})">✏️ Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTestimonial(${t.id})">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadSiteTexts() {
+      try {
+        const res = await adminFetch('/api/admin/site-texts');
+        siteTexts = await res.json();
+        renderTextsTable();
+      } catch (err) {
+        document.getElementById('textsTableBody').innerHTML = `<tr><td colspan="3" class="empty-state">Error al cargar textos: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderTextsTable() {
+      const tbody = document.getElementById('textsTableBody');
+      const keys = Object.keys(siteTexts);
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="empty-state"><h3>Sin textos</h3><p>Agregá el primero.</p></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = keys.map(key => `
+        <tr>
+          <td><code>${key}</code></td>
+          <td>${siteTexts[key] || ''}</td>
+          <td>
+            <div class="actions">
+              <button class="btn btn-secondary btn-sm" onclick="editText('${key}')">✏️ Editar</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openModal(product = null) {
+      editingId = product ? product.id : null;
+      document.getElementById('modalTitle').textContent = product ? 'Editar Producto' : 'Nuevo Producto';
+      document.getElementById('pName').value = product ? product.name : '';
+      document.getElementById('pCategory').value = product ? product.category : 'pulseras';
+      document.getElementById('pPrice').value = product ? product.price : '';
+      document.getElementById('pDesc').value = product ? product.description : '';
+      document.getElementById('pEmoji').value = product ? (product.emoji || '') : '';
+      document.getElementById('pImage').value = product ? (product.image || '') : '';
+      const preview = document.getElementById('imagePreview');
+      if (product && product.image) {
+        preview.src = product.image;
+        preview.style.display = 'block';
+        document.getElementById('uploadLabel').textContent = 'Cambiar imagen';
+      } else {
+        preview.style.display = 'none';
+        preview.src = '';
+        document.getElementById('uploadLabel').textContent = 'Hacé clic o arrastrá la imagen aquí';
+      }
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      editingId = null;
+    }
+
+    function openTestimonialModal(testimonial = null) {
+      editingId = testimonial ? testimonial.id : null;
+      document.getElementById('testimonialModalTitle').textContent = testimonial ? 'Editar Testimonio' : 'Nuevo Testimonio';
+      document.getElementById('tName').value = testimonial ? testimonial.name : '';
+      document.getElementById('tComment').value = testimonial ? testimonial.comment : '';
+      document.getElementById('tRating').value = testimonial ? testimonial.rating : 5;
+      document.getElementById('tImage').value = testimonial ? (testimonial.image || '') : '';
+      document.getElementById('tId').value = editingId || '';
+      document.getElementById('testimonialModalOverlay').classList.add('active');
+    }
+
+    function closeTestimonialModal() {
+      document.getElementById('testimonialModalOverlay').classList.remove('active');
+      editingId = null;
+    }
+
+    function openTextModal(key = null) {
+      editingId = key;
+      document.getElementById('textModalTitle').textContent = key ? 'Editar Texto' : 'Nuevo Texto';
+      document.getElementById('textKey').value = key || '';
+      document.getElementById('textKey').disabled = !!key;
+      document.getElementById('textValue').value = key ? (siteTexts[key] || '') : '';
+      document.getElementById('textModalOverlay').classList.add('active');
+    }
+
+    function closeTextModal() {
+      document.getElementById('textModalOverlay').classList.remove('active');
+      editingId = null;
+    }
+
+    function editProduct(id) {
+      const p = products.find(x => x.id === id);
+      if (p) openModal(p);
+    }
+
+    function editTestimonial(id) {
+      const t = testimonials.find(x => x.id === id);
+      if (t) openTestimonialModal(t);
+    }
+
+    function editText(key) {
+      openTextModal(key);
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('¿Eliminar producto?')) return;
+      try {
+        await adminFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+        products = products.filter(p => p.id !== id);
+        renderProductsTable();
+        showToast('Producto eliminado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteTestimonial(id) {
+      if (!confirm('¿Eliminar testimonio?')) return;
+      try {
+        await adminFetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
+        testimonials = testimonials.filter(t => t.id !== id);
+        renderTestimonialsTable();
+        showToast('Testimonio eliminado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function previewImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        document.getElementById('uploadLabel').textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveProduct() {
+      const name = document.getElementById('pName').value.trim();
+      const category = document.getElementById('pCategory').value;
+      const price = Number(document.getElementById('pPrice').value);
+      const description = document.getElementById('pDesc').value.trim();
+      const emoji = document.getElementById('pEmoji').value.trim() || '📿';
+      const image = document.getElementById('pImage').value;
+
+      if (!name || !price) {
+        showToast('Título y precio son obligatorios', 'error');
+        return;
+      }
+
+      let uploadedImage = image;
+      const fileInput = document.getElementById('pImageInput');
+      if (fileInput.files[0]) {
+        try {
+          const form = new FormData();
+          form.append('image', fileInput.files[0]);
+          const res = await adminFetch('/api/admin/upload', {
+            method: 'POST',
+            body: form
+          });
+          const data = await res.json();
+          uploadedImage = data.url;
+        } catch (err) {
+          showToast('Error al subir imagen: ' + err.message, 'error');
+          return;
+        }
+      }
+
+      const payload = {
+        name,
+        category,
+        price,
+        description,
+        emoji,
+        image: uploadedImage
+      };
+
+      try {
+        const url = editingId ? `/api/admin/products/${editingId}` : '/api/admin/products';
+        const method = editingId ? 'PUT' : 'POST';
+        const res = await adminFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const saved = await res.json();
+
+        if (editingId) {
+          const idx = products.findIndex(p => p.id === editingId);
+          if (idx !== -1) products[idx] = saved;
+        } else {
+          products.push(saved);
+        }
+
+        renderProductsTable();
+        closeModal();
+        showToast('Producto guardado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function saveTestimonial() {
+      const name = document.getElementById('tName').value.trim();
+      const comment = document.getElementById('tComment').value.trim();
+      const rating = Number(document.getElementById('tRating').value);
+      const image = document.getElementById('tImage').value.trim();
+
+      if (!name || !comment) {
+        showToast('Nombre y comentario son obligatorios', 'error');
+        return;
+      }
+
+      const payload = { name, comment, rating, image, active: true };
+
+      try {
+        if (editingId) {
+          await adminFetch(`/api/admin/testimonials/${editingId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          await adminFetch('/api/admin/testimonials', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        await loadTestimonials();
+        closeTestimonialModal();
+        showToast('Testimonio guardado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function saveText() {
+      const key = document.getElementById('textKey').value.trim();
+      const value = document.getElementById('textValue').value;
+
+      if (!key) {
+        showToast('La clave es obligatoria', 'error');
+        return;
+      }
+
+      try {
+        await adminFetch('/api/admin/site-texts', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key, value })
+        });
+        await loadSiteTexts();
+        closeTextModal();
+        showToast('Texto guardado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    });
+
+    document.getElementById('testimonialModalOverlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('testimonialModalOverlay')) closeTestimonialModal();
+    });
+
+    document.getElementById('textModalOverlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('textModalOverlay')) closeTextModal();
+    });
+
+    function formatARS(num) {
+      return '$' + Number(num).toLocaleString('es-AR');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (authToken) {
+        document.getElementById('loginOverlay').classList.add('hidden');
+      }
+      navigateTo('products');
+      setupDragDrop();
+    });
+
+    function setupDragDrop() {
+      const zone = document.getElementById('dropZone');
+      if (!zone) return;
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+        zone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
+      });
+      ['dragenter', 'dragover'].forEach(evt => {
+        zone.addEventListener(evt, () => zone.classList.add('drag-over'));
+      });
+      ['dragleave', 'drop'].forEach(evt => {
+        zone.addEventListener(evt, () => zone.classList.remove('drag-over'));
+      });
+      zone.addEventListener('drop', (e) => {
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+        const input = document.getElementById('pImageInput');
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+        previewImage(input);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+/* ==================== CSS VARIABLES ==================== */
+:root {
+  --rose: #f4b8c8;
+  --rose-dark: #d47090;
+  --rose-light: #fde8ef;
+  --rose-mid: #e8a0b5;
+  --cream: #fdf6f8;
+  --blush: #fff0f4;
+  --text-dark: #3a1f28;
+  --text-mid: #7a4a58;
+  --text-muted: #b08898;
+  --mint: #e8f4f0;
+  --gold: #c9a96e;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-xl: 40px;
+  --shadow-sm: 0 4px 16px rgba(212,112,144,0.10);
+  --shadow-md: 0 8px 32px rgba(212,112,144,0.15);
+  --shadow-lg: 0 16px 48px rgba(212,112,144,0.20);
+  --transition: all 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --rose: #d47090;
+  --rose-dark: #f4b8c8;
+  --rose-light: #3a1f28;
+  --rose-mid: #b06078;
+  --cream: #1f1418;
+  --blush: #2d1f24;
+  --text-dark: #f4e6ec;
+  --text-mid: #d8c4cc;
+  --text-muted: #a08898;
+  --mint: #1a2e28;
+  --gold: #d4b878;
+  --shadow-sm: 0 4px 16px rgba(0,0,0,0.20);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.30);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.40);
+}
