@@ -2,9 +2,15 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadsDir = path.join(__dirname, '..', '..', 'uploads', 'products');
+const isVercel = process.env.VERCEL === 'true';
+const uploadsDir = isVercel ? '/tmp/uploads/products' : path.join(__dirname, '..', '..', 'uploads', 'products');
+
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  } catch (err) {
+    console.error('Error creando directorio de uploads:', err.message);
+  }
 }
 
 const storage = multer.diskStorage({
@@ -55,7 +61,7 @@ async function saveFile(req, res) {
   if (!req.file) {
     return res.status(400).json({ error: 'No se recibió imagen' });
   }
-  const relativePath = `/uploads/products/${req.file.filename}`;
+  const relativePath = isVercel ? req.file.filename : `/uploads/products/${req.file.filename}`;
   res.json({
     url: relativePath,
     filename: req.file.filename,
