@@ -17,7 +17,7 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <h2>🌸 Artesanía Admin</h2>
-      <p>Iniciá sesión para continuar</p>
+      <p id="loginMessage">Iniciá sesión para continuar</p>
       <div class="form-group">
         <label>Usuario</label>
         <input type="text" id="loginUser" placeholder="Usuario" autocomplete="username" />
@@ -32,7 +32,8 @@
           </button>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="doLogin()">Ingresar</button>
+      <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Ingresar</button>
+      <p class="login-hint" id="loginHint">Usuario: iara | Contraseña: pulseras2026</p>
     </div>
   </div>
 
@@ -241,23 +242,52 @@
 
   <script src="../js/config.js"></script>
   <script>
-    let authToken = localStorage.getItem('ag_admin_jwt') || '';
+    const API_BASE = '/';
+    const authToken = localStorage.getItem('ag_admin_jwt') || '';
     let currentSection = 'products';
     let products = [];
     let testimonials = [];
     let siteTexts = {};
     let editingId = null;
 
+    function getApiUrl(path) {
+      return `${API_BASE}${path.replace(/^\//, '')}`;
+    }
+
+    async function checkServerHealth() {
+      const btn = document.getElementById('loginBtn');
+      const hint = document.getElementById('loginHint');
+      try {
+        btn.textContent = 'Verificando...';
+        btn.disabled = true;
+        const res = await fetch(getApiUrl('/api/health'), { method: 'GET', signal: AbortSignal.timeout(15000) });
+        if (!res.ok) throw new Error(`Servidor respondió con estado ${res.status}`);
+        hint.textContent = '✅ Servidor conectado. Usuario: iara | Contraseña: pulseras2026';
+        hint.style.color = '#10b981';
+      } catch (err) {
+        hint.textContent = `❌ No se pudo conectar al servidor: ${err.message}. Si estás en Render, puede estar dormido. Esperá 30 segundos y recargá.`;
+        hint.style.color = '#ef4444';
+      } finally {
+        btn.textContent = 'Ingresar';
+        btn.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.location.protocol === 'file:') {
+        document.getElementById('loginUser').disabled = true;
+        document.getElementById('loginPass').disabled = true;
+        document.getElementById('passwordToggle').disabled = true;
+        document.getElementById('loginBtn').disabled = true;
+        document.getElementById('loginHint').textContent = '⚠️ Abrí este panel desde el servidor, no como archivo.';
+        document.getElementById('loginHint').style.color = '#ef4444';
+      } else {
+        checkServerHealth();
+      }
+    });
+
     const passwordToggle = document.getElementById('passwordToggle');
     const loginPass = document.getElementById('loginPass');
-
-    if (window.location.protocol === 'file:') {
-      document.getElementById('loginUser').disabled = true;
-      document.getElementById('loginPass').disabled = true;
-      document.getElementById('passwordToggle').disabled = true;
-      document.querySelector('.login-card button').disabled = true;
-      showToast('Abrí este panel desde el servidor, no como archivo. Usá http://localhost:3000/pages/admin.html o tu URL de Render/Vercel.', 'error');
-    }
 
     if (passwordToggle && loginPass) {
       passwordToggle.addEventListener('click', () => {
@@ -275,12 +305,19 @@
         showToast('Ingresá usuario y contraseña', 'error');
         return;
       }
+      const btn = document.getElementById('loginBtn');
       try {
-        const res = await fetch('/api/admin/login', {
+        btn.textContent = 'Ingresando...';
+        btn.disabled = true;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
+        const res = await fetch(getApiUrl('/api/admin/login'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ username, password }),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
         const contentType = res.headers.get('content-type');
         const data = contentType && contentType.includes('application/json') ? await res.json() : { error: await res.text() };
         if (!res.ok) throw new Error(data.error || `Error ${res.status}: ${res.statusText}`);
@@ -290,11 +327,16 @@
         showToast(`Bienvenida, ${data.user}`, 'success');
       } catch (err) {
         console.error('Login error:', err);
-        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('fetch')) {
-          showToast('No se pudo conectar al servidor. Asegurate de estar abriendo el panel desde el servidor (http://localhost:3000/pages/admin.html) y no como archivo.', 'error');
+        if (err.name === 'AbortError') {
+          showToast('El servidor tardó demasiado en responder. En Render free, el servidor puede estar dormido. Esperá 30 segundos y recargá la página.', 'error');
+        } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('fetch')) {
+          showToast('No se pudo conectar al servidor. Revisá que el backend esté corriendo en Render/Vercel.', 'error');
         } else {
           showToast(err.message, 'error');
         }
+      } finally {
+        btn.textContent = 'Ingresar';
+        btn.disabled = false;
       }
     }
 
