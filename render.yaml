@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: iara-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGIN
+        value: https://iara-yrdx.onrender.com
+      - key: ADMIN_USER
+        value: iara
+      - key: ADMIN_PASS
+        value: pulseras2026
+    autoDeploy: true
+    branch: main
+    repo: https://github.com/bonggiocrack-stack/IARA.git
