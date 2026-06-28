@@ -6,7 +6,7 @@ Sitio web de artesanías con panel de administración integrado.
 
 ```
 /
-├── frontend/
+├── public/
 │   ├── assets/
 │   ├── css/
 │   │   └── animations.css

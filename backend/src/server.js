@@ -56,7 +56,7 @@ app.post('/api/admin/upload', require('./middleware/auth').adminAuth, handleUplo
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '..', '..', 'uploads')));
-const staticDir = path.join(__dirname, '..', '..', 'frontend');
+const staticDir = path.join(__dirname, '..', '..', 'public');
 
 app.use('/css', express.static(path.join(staticDir, 'css')));
 app.use('/js', express.static(path.join(staticDir, 'js')));

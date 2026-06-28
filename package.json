@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "test": "jest --config tests/unit/jest.config.js --testEnvironment jsdom",
-    "lint": "eslint frontend/js/ tests/ --ext .js",
+    "lint": "eslint public/js/ tests/ --ext .js",
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
-    "lint:fix": "eslint frontend/js/ tests/ --ext .js --fix",
+    "lint:fix": "eslint public/js/ tests/ --ext .js --fix",
     "e2e": "playwright test",
     "dev": "cd backend && npm start",
     "start": "cd backend && npm start"
