@@ -77,13 +77,55 @@ try {
 
   app.get('/api/products', async (req, res) => {
     try {
-      if (useLocalFallback) {
-        return res.json(localProducts);
-      }
+      if (useLocalFallback) return res.json(localProducts);
       const { rows } = await pool.query('SELECT * FROM products ORDER BY id ASC');
       res.json(rows);
     } catch (err) {
       console.error('products error:', err.message);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // adminAuth middleware
+  function adminAuth(req, res, next) {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : req.headers['x-admin-token'];
+    if (!token) {
+      return res.status(401).json({ error: 'No autorizado' });
+    }
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded.role !== 'admin') {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
+      req.user = decoded;
+      next();
+    } catch (err) {
+      return res.status(401).json({ error: 'Token inválido o expirado' });
+    }
+  }
+
+  app.get('/api/admin/products', adminAuth, async (req, res) => {
+    try {
+      const { rows } = await pool.query('SELECT * FROM products ORDER BY id ASC');
+      res.json(rows);
+    } catch (err) {
+      console.error('admin products error:', err.message);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/admin/products', adminAuth, async (req, res) => {
+    const { name, category, price, description, emoji, image, badge, stock = 0 } = req.body || {};
+    if (!name || !price) return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
+    try {
+      const result = await pool.query(
+        'INSERT INTO products (name, category, price, description, emoji, image, badge, stock) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+        [name, category || 'pulseras', Number(price), description || '', emoji || '📿', image || '', badge || '', Number(stock)]
+      );
+      res.status(201).json({ id: result.rows[0].id, name, category, price, description, emoji, image, badge, stock });
+    } catch (err) {
+      console.error('create product error:', err.message);
       res.status(500).json({ error: err.message });
     }
   });
@@ -111,6 +153,11 @@ try {
   };
   const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
   console.log('multer loaded');
+
+  app.post('/api/admin/upload', adminAuth, upload.single('image'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No se recibió imagen' });
+    res.json({ url: `/uploads/products/${req.file.filename}`, filename: req.file.filename });
+  });
 } catch (e) { console.error('multer:', e.message); }
 
 try {
