@@ -107,7 +107,26 @@ app.delete('/api/admin/products/:id', adminAuth, (req, res) => {
 let siteTexts = {
   hero_title: 'Regalos artesanales que cuentan historias',
   hero_subtitle: 'Hecho a mano con amor en Gualeguay',
-  about_text: 'En Artesanía Gualeguay creamos piezas únicas que reflejan la riqueza cultural de nuestra región. Cada pulsera, llavero y souvenir es hecho con dedicación y cuidado artesanal. Nuestro compromiso es ofrecer productos de calidad, con un toque personal que hace cada compra especial. Creemos que los regalos artesanales son más significativos porque llevan una historia.'
+  about_text: 'En Artesanía Gualeguay creamos piezas únicas que reflejan la riqueza cultural de nuestra región. Cada pulsera, llavero y souvenir es hecho con dedicación y cuidado artesanal. Nuestro compromiso es ofrecer productos de calidad, con un toque personal que hace cada compra especial. Creemos que los regalos artesanales son más significativos porque llevan una historia.',
+  feature_1_title: 'Hecho a mano',
+  feature_1_desc: 'Cada pieza es artesanal y única',
+  feature_2_title: 'Envío gratis',
+  feature_2_desc: 'En compras mayores a ARS 2.000',
+  feature_3_title: 'Materiales premium',
+  feature_3_desc: 'Seleccionados con cuidado',
+  feature_4_title: 'Para regalar',
+  feature_4_desc: 'Empaques especiales disponibles',
+  process_subtitle: 'Cinco pasos simples para comprar tu artesanía',
+  process_step_1_title: 'Elegí productos',
+  process_step_1_desc: 'Filtrá por categoría y elegí tu pieza del catálogo.',
+  process_step_2_title: 'Sumá al carrito',
+  process_step_2_desc: 'Presioná "Agregar" para guardar tu selección.',
+  process_step_3_title: 'Revisá el carrito',
+  process_step_3_desc: 'Verificá cantidades, subtotal y total antes de pagar.',
+  process_step_4_title: 'Pagá con MercadoPago',
+  process_step_4_desc: 'Ingresá al checkout para completar el pago de forma segura.',
+  process_step_5_title: 'Confirmación',
+  process_step_5_desc: 'Al finalizar, vas a ver el comprobante en pantalla.'
 };
 app.get('/api/site-texts', (req, res) => res.json(siteTexts));
 app.get('/api/admin/site-texts', adminAuth, (req, res) => res.json(siteTexts));

@@ -250,10 +250,43 @@ async function loadSiteTexts() {
     const res = await safeFetch('/api/site-texts');
     if (!res) return;
     const data = await res.json();
+
     if (data.about_text && document.getElementById('aboutText')) {
-      const el = document.getElementById('aboutText');
-      el.innerHTML = `<p>${data.about_text}</p>`;
+      document.getElementById('aboutText').innerHTML = `<p>${data.about_text}</p>`;
     }
+
+    const featureMap = [
+      { titleId: 'feature1Title', descId: 'feature1Desc', titleKey: 'feature_1_title', descKey: 'feature_1_desc' },
+      { titleId: 'feature2Title', descId: 'feature2Desc', titleKey: 'feature_2_title', descKey: 'feature_2_desc' },
+      { titleId: 'feature3Title', descId: 'feature3Desc', titleKey: 'feature_3_title', descKey: 'feature_3_desc' },
+      { titleId: 'feature4Title', descId: 'feature4Desc', titleKey: 'feature_4_title', descKey: 'feature_4_desc' }
+    ];
+
+    featureMap.forEach(f => {
+      const titleEl = document.getElementById(f.titleId);
+      const descEl = document.getElementById(f.descId);
+      if (titleEl && data[f.titleKey]) titleEl.textContent = data[f.titleKey];
+      if (descEl && data[f.descKey]) descEl.textContent = data[f.descKey];
+    });
+
+    if (data.process_subtitle && document.querySelector('.how-it-works .section-subtitle')) {
+      document.querySelector('.how-it-works .section-subtitle').textContent = data.process_subtitle;
+    }
+
+    const processSteps = [
+      { titleId: 'processStep1Title', descId: 'processStep1Desc', titleKey: 'process_step_1_title', descKey: 'process_step_1_desc' },
+      { titleId: 'processStep2Title', descId: 'processStep2Desc', titleKey: 'process_step_2_title', descKey: 'process_step_2_desc' },
+      { titleId: 'processStep3Title', descId: 'processStep3Desc', titleKey: 'process_step_3_title', descKey: 'process_step_3_desc' },
+      { titleId: 'processStep4Title', descId: 'processStep4Desc', titleKey: 'process_step_4_title', descKey: 'process_step_4_desc' },
+      { titleId: 'processStep5Title', descId: 'processStep5Desc', titleKey: 'process_step_5_title', descKey: 'process_step_5_desc' }
+    ];
+
+    processSteps.forEach(step => {
+      const titleEl = document.getElementById(step.titleId);
+      const descEl = document.getElementById(step.descId);
+      if (titleEl && data[step.titleKey]) titleEl.textContent = data[step.titleKey];
+      if (descEl && data[step.descKey]) descEl.textContent = data[step.descKey];
+    });
   } catch (err) {
     console.error('Error cargando textos del sitio:', err);
   }
