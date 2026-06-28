@@ -247,7 +247,7 @@
         btn.disabled = true;
         const res = await fetch(getApiUrl('/api/health'), { method: 'GET', signal: AbortSignal.timeout(15000) });
         if (!res.ok) throw new Error(`Servidor respondió con estado ${res.status}`);
-        hint.textContent = '✅ Servidor conectado. Credenciales: iara / pulseras2026';
+        hint.textContent = '✅ Servidor conectado';
         hint.style.color = '#10b981';
       } catch (err) {
         hint.textContent = `❌ No se pudo conectar al servidor: ${err.message}`;
