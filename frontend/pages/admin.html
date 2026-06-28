@@ -25,14 +25,14 @@
       <div class="form-group password-group">
         <label>Contraseña</label>
         <div class="password-input-wrapper">
-          <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()" />
+          <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password" />
           <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar contraseña">
             <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <svg class="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
           </button>
         </div>
       </div>
-      <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Ingresar</button>
+      <button class="btn btn-primary" id="loginBtn">Ingresar</button>
       <p class="login-hint" id="loginHint">Verificando conexión con el servidor...</p>
     </div>
   </div>
@@ -50,7 +50,7 @@
     </nav>
     <div class="sidebar-footer">
       <a href="../index.html" target="_blank" class="btn btn-secondary btn-full">← Ver sitio</a>
-      <button class="btn btn-danger btn-full" onclick="doLogout()" style="margin-top: 0.5rem;">Cerrar sesión</button>
+      <button class="btn btn-danger btn-full" id="logoutBtn" style="margin-top: 0.5rem;">Cerrar sesión</button>
     </div>
   </aside>
 
@@ -60,7 +60,7 @@
         <h1 id="sectionTitle">Productos</h1>
         <p class="header-subtitle" id="sectionSubtitle">Gestioná productos, fotos y precios</p>
       </div>
-      <button class="btn btn-primary" id="sectionAction" onclick="openSectionModal()">+ Nuevo Producto</button>
+      <button class="btn btn-primary" id="sectionAction">+ Nuevo Producto</button>
     </div>
 
     <div class="card" id="productsSection">
@@ -794,6 +794,18 @@
         document.getElementById('loginOverlay').classList.add('hidden');
       }
       navigateTo('products');
+
+      const loginBtn = document.getElementById('loginBtn');
+      if (loginBtn) loginBtn.addEventListener('click', doLogin);
+
+      const loginPass = document.getElementById('loginPass');
+      if (loginPass) loginPass.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+
+      const sectionAction = document.getElementById('sectionAction');
+      if (sectionAction) sectionAction.addEventListener('click', openSectionModal);
     });
 
     function exportCSV(type) {
