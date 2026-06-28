@@ -49,6 +49,8 @@ function rateLimitMiddleware(req, res, next) {
 
 app.use(express.json());
 
+app.get('/api/health', (req, res) => res.json({ ok: true }));
+
 function adminAuth(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : req.headers['x-admin-token'];
