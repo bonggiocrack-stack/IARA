@@ -2,21 +2,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/min-server.js",
+      "src": "backend/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "backend/min-server.js"
+      "dest": "backend/server.js"
     }
   ],
   "env": {
     "NODE_ENV": "production",
     "ADMIN_USER": "iara",
     "ADMIN_PASS": "pulseras2026",
-    "DATABASE_URL": "postgresql://neondb_owner:npg_7HOeMptSdmY5@ep-wandering-breeze-adetvf8t-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
-    "ALLOWED_ORIGINS": "https://iara-yrdx.onrender.com,https://iara-eight.vercel.app,https://iara-h5jp7meps-iara3.vercel.app"
+    "JWT_SECRET": "iara_secret_key_2026_secure_random",
+    "ALLOWED_ORIGINS": "https://iara-eight.vercel.app,https://iara-yrdx.onrender.com"
   }
 }

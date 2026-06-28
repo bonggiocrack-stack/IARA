@@ -33,7 +33,7 @@
         </div>
       </div>
       <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Ingresar</button>
-      <p class="login-hint" id="loginHint">Usuario: iara | Contraseña: pulseras2026</p>
+      <p class="login-hint" id="loginHint">Verificando conexión con el servidor...</p>
     </div>
   </div>
 
@@ -46,11 +46,10 @@
       <a href="#products" class="active" data-section="products">📦 Productos</a>
       <a href="#testimonials" data-section="testimonials">💬 Testimonios</a>
       <a href="#texts" data-section="texts">📝 Textos del Sitio</a>
-      <a href="#orders" onclick="showToast('Próximamente', 'Órdenes')">🧾 Órdenes</a>
-      <a href="#settings" onclick="showToast('Próximamente', 'Configuración')">⚙️ Configuración</a>
     </nav>
     <div class="sidebar-footer">
       <a href="../index.html" target="_blank" class="btn btn-secondary btn-full">← Ver sitio</a>
+      <button class="btn btn-danger btn-full" onclick="doLogout()" style="margin-top: 0.5rem;">Cerrar sesión</button>
     </div>
   </aside>
 
@@ -139,7 +138,7 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label>Título</label>
+          <label>Nombre del producto</label>
           <input type="text" id="pName" placeholder="Nombre del producto" />
         </div>
         <div class="form-grid-2">
@@ -161,19 +160,9 @@
           <textarea id="pDesc" rows="3" placeholder="Descripción corta del producto"></textarea>
         </div>
         <div class="form-group">
-          <label>Emoji de fallback</label>
-          <input type="text" id="pEmoji" placeholder="📿" maxlength="4" />
+          <label>URL de imagen (opcional)</label>
+          <input type="text" id="pImage" placeholder="https://..." />
         </div>
-        <div class="form-group">
-          <label>Imagen del producto</label>
-          <label class="image-upload" for="pImageInput" id="dropZone">
-            <input type="file" id="pImageInput" accept="image/*" onchange="previewImage(this)" />
-            <span id="uploadLabel">Hacé clic o arrastrá la imagen aquí</span>
-            <img id="imagePreview" class="image-preview" style="display:none;" alt="Vista previa" />
-          </label>
-          <p class="form-hint">Formatos: JPG, PNG, WebP, GIF. Máx 5MB.</p>
-        </div>
-        <input type="hidden" id="pImage" />
         <input type="hidden" id="pId" />
       </div>
       <div class="modal-footer">
@@ -201,10 +190,6 @@
         <div class="form-group">
           <label>Valoración (1-5)</label>
           <input type="number" id="tRating" placeholder="5" min="1" max="5" value="5" />
-        </div>
-        <div class="form-group">
-          <label>URL de imagen (opcional)</label>
-          <input type="text" id="tImage" placeholder="https://..." />
         </div>
         <input type="hidden" id="tId" />
       </div>
@@ -243,7 +228,7 @@
   <script src="../js/config.js"></script>
   <script>
     const API_BASE = '/';
-    const authToken = localStorage.getItem('ag_admin_jwt') || '';
+    let authToken = localStorage.getItem('ag_admin_jwt') || '';
     let currentSection = 'products';
     let products = [];
     let testimonials = [];
@@ -262,10 +247,10 @@
         btn.disabled = true;
         const res = await fetch(getApiUrl('/api/health'), { method: 'GET', signal: AbortSignal.timeout(15000) });
         if (!res.ok) throw new Error(`Servidor respondió con estado ${res.status}`);
-        hint.textContent = '✅ Servidor conectado. Usuario: iara | Contraseña: pulseras2026';
+        hint.textContent = '✅ Servidor conectado. Credenciales: iara / pulseras2026';
         hint.style.color = '#10b981';
       } catch (err) {
-        hint.textContent = `❌ No se pudo conectar al servidor: ${err.message}. Si estás en Render, puede estar dormido. Esperá 30 segundos y recargá.`;
+        hint.textContent = `❌ No se pudo conectar al servidor: ${err.message}`;
         hint.style.color = '#ef4444';
       } finally {
         btn.textContent = 'Ingresar';
@@ -279,7 +264,7 @@
         document.getElementById('loginPass').disabled = true;
         document.getElementById('passwordToggle').disabled = true;
         document.getElementById('loginBtn').disabled = true;
-        document.getElementById('loginHint').textContent = '⚠️ Abrí este panel desde el servidor, no como archivo.';
+        document.getElementById('loginHint').textContent = '⚠️ Abrí este panel desde el servidor.';
         document.getElementById('loginHint').style.color = '#ef4444';
       } else {
         checkServerHealth();
@@ -288,7 +273,6 @@
 
     const passwordToggle = document.getElementById('passwordToggle');
     const loginPass = document.getElementById('loginPass');
-
     if (passwordToggle && loginPass) {
       passwordToggle.addEventListener('click', () => {
         const isPassword = loginPass.type === 'password';
@@ -318,19 +302,17 @@
           signal: controller.signal
         });
         clearTimeout(timeoutId);
-        const contentType = res.headers.get('content-type');
-        const data = contentType && contentType.includes('application/json') ? await res.json() : { error: await res.text() };
-        if (!res.ok) throw new Error(data.error || `Error ${res.status}: ${res.statusText}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
         authToken = data.token;
         localStorage.setItem('ag_admin_jwt', authToken);
         document.getElementById('loginOverlay').classList.add('hidden');
         showToast(`Bienvenida, ${data.user}`, 'success');
+        navigateTo('products');
       } catch (err) {
         console.error('Login error:', err);
         if (err.name === 'AbortError') {
-          showToast('El servidor tardó demasiado en responder. En Render free, el servidor puede estar dormido. Esperá 30 segundos y recargá la página.', 'error');
-        } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('fetch')) {
-          showToast('No se pudo conectar al servidor. Revisá que el backend esté corriendo en Render/Vercel.', 'error');
+          showToast('El servidor tardó demasiado. Recargá la página.', 'error');
         } else {
           showToast(err.message, 'error');
         }
@@ -338,6 +320,13 @@
         btn.textContent = 'Ingresar';
         btn.disabled = false;
       }
+    }
+
+    function doLogout() {
+      authToken = '';
+      localStorage.removeItem('ag_admin_jwt');
+      document.getElementById('loginOverlay').classList.remove('hidden');
+      showToast('Sesión cerrada', 'default');
     }
 
     async function adminFetch(url, opts = {}) {
@@ -370,11 +359,9 @@
       currentSection = section;
       document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
       document.querySelector(`.sidebar-nav a[data-section="${section}"]`)?.classList.add('active');
-
       document.getElementById('productsSection').style.display = section === 'products' ? 'block' : 'none';
       document.getElementById('testimonialsSection').style.display = section === 'testimonials' ? 'block' : 'none';
       document.getElementById('textsSection').style.display = section === 'texts' ? 'block' : 'none';
-
       const titles = {
         products: ['Productos', 'Gestioná productos, fotos y precios', '+ Nuevo Producto'],
         testimonials: ['Testimonios', 'Gestioná testimonios de clientes', '+ Nuevo Testimonio'],
@@ -384,7 +371,6 @@
       document.getElementById('sectionTitle').textContent = title;
       document.getElementById('sectionSubtitle').textContent = subtitle;
       document.getElementById('sectionAction').textContent = action;
-
       if (section === 'products') loadProducts();
       if (section === 'testimonials') loadTestimonials();
       if (section === 'texts') loadSiteTexts();
@@ -399,18 +385,17 @@
     document.querySelectorAll('.sidebar-nav a[data-section]').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        const section = link.getAttribute('data-section');
-        navigateTo(section);
+        navigateTo(link.getAttribute('data-section'));
       });
     });
 
     async function loadProducts() {
       try {
-        const res = await fetch('/api/products');
+        const res = await adminFetch('/api/admin/products');
         products = await res.json();
         renderProductsTable();
       } catch (err) {
-        document.getElementById('tableBody').innerHTML = `<tr><td colspan="5" class="empty-state">Error al cargar productos: ${err.message}</td></tr>`;
+        document.getElementById('tableBody').innerHTML = `<tr><td colspan="5" class="empty-state">Error: ${err.message}</td></tr>`;
       }
     }
 
@@ -418,12 +403,10 @@
       const q = document.getElementById('searchInput').value.toLowerCase();
       const filtered = products.filter(p => (p.name + ' ' + p.description + ' ' + p.category).toLowerCase().includes(q));
       const tbody = document.getElementById('tableBody');
-
       if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><h3>Sin resultados</h3><p>No se encontraron productos.</p></td></tr>`;
         return;
       }
-
       tbody.innerHTML = filtered.map(p => `
         <tr>
           <td>
@@ -436,7 +419,7 @@
             </div>
           </td>
           <td><span class="badge badge-${p.category}">${p.category}</span></td>
-          <td><span class="price-cell">${formatARS(Number(p.price))}</span></td>
+          <td><span class="price-cell">$${Number(p.price).toLocaleString('es-AR')}</span></td>
           <td>${p.image ? '📷' : '—'}</td>
           <td>
             <div class="actions">
@@ -454,7 +437,7 @@
         testimonials = await res.json();
         renderTestimonialsTable();
       } catch (err) {
-        document.getElementById('testimonialsTableBody').innerHTML = `<tr><td colspan="5" class="empty-state">Error al cargar testimonios: ${err.message}</td></tr>`;
+        document.getElementById('testimonialsTableBody').innerHTML = `<tr><td colspan="5" class="empty-state">Error: ${err.message}</td></tr>`;
       }
     }
 
@@ -486,7 +469,7 @@
         siteTexts = await res.json();
         renderTextsTable();
       } catch (err) {
-        document.getElementById('textsTableBody').innerHTML = `<tr><td colspan="3" class="empty-state">Error al cargar textos: ${err.message}</td></tr>`;
+        document.getElementById('textsTableBody').innerHTML = `<tr><td colspan="3" class="empty-state">Error: ${err.message}</td></tr>`;
       }
     }
 
@@ -517,18 +500,8 @@
       document.getElementById('pCategory').value = product ? product.category : 'pulseras';
       document.getElementById('pPrice').value = product ? product.price : '';
       document.getElementById('pDesc').value = product ? product.description : '';
-      document.getElementById('pEmoji').value = product ? (product.emoji || '') : '';
       document.getElementById('pImage').value = product ? (product.image || '') : '';
-      const preview = document.getElementById('imagePreview');
-      if (product && product.image) {
-        preview.src = product.image;
-        preview.style.display = 'block';
-        document.getElementById('uploadLabel').textContent = 'Cambiar imagen';
-      } else {
-        preview.style.display = 'none';
-        preview.src = '';
-        document.getElementById('uploadLabel').textContent = 'Hacé clic o arrastrá la imagen aquí';
-      }
+      document.getElementById('pId').value = editingId || '';
       document.getElementById('modalOverlay').classList.add('active');
     }
 
@@ -543,7 +516,6 @@
       document.getElementById('tName').value = testimonial ? testimonial.name : '';
       document.getElementById('tComment').value = testimonial ? testimonial.comment : '';
       document.getElementById('tRating').value = testimonial ? testimonial.rating : 5;
-      document.getElementById('tImage').value = testimonial ? (testimonial.image || '') : '';
       document.getElementById('tId').value = editingId || '';
       document.getElementById('testimonialModalOverlay').classList.add('active');
     }
@@ -581,6 +553,43 @@
       openTextModal(key);
     }
 
+    async function saveProduct() {
+      const name = document.getElementById('pName').value.trim();
+      const category = document.getElementById('pCategory').value;
+      const price = Number(document.getElementById('pPrice').value);
+      const description = document.getElementById('pDesc').value.trim();
+      const image = document.getElementById('pImage').value.trim();
+      const id = Number(document.getElementById('pId').value) || null;
+
+      if (!name || !price) {
+        showToast('Nombre y precio son obligatorios', 'error');
+        return;
+      }
+
+      const payload = { name, category, price, description, image, emoji: '📿', badge: '' };
+
+      try {
+        if (id) {
+          await adminFetch(`/api/admin/products/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          await adminFetch('/api/admin/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        await loadProducts();
+        closeModal();
+        showToast('Producto guardado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
     async function deleteProduct(id) {
       if (!confirm('¿Eliminar producto?')) return;
       try {
@@ -593,108 +602,22 @@
       }
     }
 
-    async function deleteTestimonial(id) {
-      if (!confirm('¿Eliminar testimonio?')) return;
-      try {
-        await adminFetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
-        testimonials = testimonials.filter(t => t.id !== id);
-        renderTestimonialsTable();
-        showToast('Testimonio eliminado', 'success');
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    }
-
-    async function previewImage(input) {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const preview = document.getElementById('imagePreview');
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-        document.getElementById('uploadLabel').textContent = file.name;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function saveProduct() {
-      const name = document.getElementById('pName').value.trim();
-      const category = document.getElementById('pCategory').value;
-      const price = Number(document.getElementById('pPrice').value);
-      const description = document.getElementById('pDesc').value.trim();
-      const emoji = document.getElementById('pEmoji').value.trim() || '📿';
-      const image = document.getElementById('pImage').value;
-
-      if (!name || !price) {
-        showToast('Título y precio son obligatorios', 'error');
-        return;
-      }
-
-      let uploadedImage = image;
-      const fileInput = document.getElementById('pImageInput');
-      if (fileInput.files[0]) {
-        try {
-          const form = new FormData();
-          form.append('image', fileInput.files[0]);
-          const res = await adminFetch('/api/admin/upload', {
-            method: 'POST',
-            body: form
-          });
-          const data = await res.json();
-          uploadedImage = data.url;
-        } catch (err) {
-          showToast('Error al subir imagen: ' + err.message, 'error');
-          return;
-        }
-      }
-
-      const payload = {
-        name,
-        category,
-        price,
-        description,
-        emoji,
-        image: uploadedImage
-      };
-
-      try {
-        const url = editingId ? `/api/admin/products/${editingId}` : '/api/admin/products';
-        const method = editingId ? 'PUT' : 'POST';
-        const res = await adminFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        const saved = await res.json();
-
-        if (editingId) {
-          const idx = products.findIndex(p => p.id === editingId);
-          if (idx !== -1) products[idx] = saved;
-        } else {
-          products.push(saved);
-        }
-
-        renderProductsTable();
-        closeModal();
-        showToast('Producto guardado', 'success');
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    }
-
     async function saveTestimonial() {
       const name = document.getElementById('tName').value.trim();
       const comment = document.getElementById('tComment').value.trim();
       const rating = Number(document.getElementById('tRating').value);
-      const image = document.getElementById('tImage').value.trim();
+      const id = Number(document.getElementById('tId').value) || null;
 
       if (!name || !comment) {
         showToast('Nombre y comentario son obligatorios', 'error');
         return;
       }
 
-      const payload = { name, comment, rating, image, active: true };
+      const payload = { name, comment, rating, active: true };
 
       try {
-        if (editingId) {
-          await adminFetch(`/api/admin/testimonials/${editingId}`, {
+        if (id) {
+          await adminFetch(`/api/admin/testimonials/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -709,6 +632,18 @@
         await loadTestimonials();
         closeTestimonialModal();
         showToast('Testimonio guardado', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteTestimonial(id) {
+      if (!confirm('¿Eliminar testimonio?')) return;
+      try {
+        await adminFetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' });
+        testimonials = testimonials.filter(t => t.id !== id);
+        renderTestimonialsTable();
+        showToast('Testimonio eliminado', 'success');
       } catch (err) {
         showToast(err.message, 'error');
       }
@@ -740,49 +675,19 @@
     document.getElementById('modalOverlay').addEventListener('click', (e) => {
       if (e.target === document.getElementById('modalOverlay')) closeModal();
     });
-
     document.getElementById('testimonialModalOverlay').addEventListener('click', (e) => {
       if (e.target === document.getElementById('testimonialModalOverlay')) closeTestimonialModal();
     });
-
     document.getElementById('textModalOverlay').addEventListener('click', (e) => {
       if (e.target === document.getElementById('textModalOverlay')) closeTextModal();
     });
-
-    function formatARS(num) {
-      return '$' + Number(num).toLocaleString('es-AR');
-    }
 
     document.addEventListener('DOMContentLoaded', () => {
       if (authToken) {
         document.getElementById('loginOverlay').classList.add('hidden');
       }
       navigateTo('products');
-      setupDragDrop();
     });
-
-    function setupDragDrop() {
-      const zone = document.getElementById('dropZone');
-      if (!zone) return;
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-        zone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
-      });
-      ['dragenter', 'dragover'].forEach(evt => {
-        zone.addEventListener(evt, () => zone.classList.add('drag-over'));
-      });
-      ['dragleave', 'drop'].forEach(evt => {
-        zone.addEventListener(evt, () => zone.classList.remove('drag-over'));
-      });
-      zone.addEventListener('drop', (e) => {
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
-        const input = document.getElementById('pImageInput');
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        input.files = dt.files;
-        previewImage(input);
-      });
-    }
   </script>
 </body>
 </html>
