@@ -186,7 +186,9 @@ initDB().catch(err => {
 });
 
 if (!useLocalFallback) {
-  migrateProductsFromJson();
+  migrateProductsFromJson().catch(err => {
+    logger.error({ error: err.message }, 'migration_failed_uncaught');
+  });
 }
 
 app.use(express.static(path.join(__dirname, '..')));
