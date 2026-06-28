@@ -179,10 +179,11 @@ async function initDB() {
     logger.info('database_initialized');
   } catch (err) {
     logger.error({ error: err.message }, 'database_init_failed');
-    throw err;
   }
 }
-initDB();
+initDB().catch(err => {
+  logger.error({ error: err.message }, 'database_init_failed_uncaught');
+});
 
 if (!useLocalFallback) {
   migrateProductsFromJson();
