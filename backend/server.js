@@ -152,7 +152,23 @@ app.post('/api/admin/upload', adminAuth, (req, res) => {
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-app.use(express.static(path.join(__dirname, '..')));
+const staticDir = path.join(__dirname, '..');
+
+// Serve index.html at root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(staticDir, 'index.html'));
+});
+
+// Serve all other static files
+app.use(express.static(staticDir));
+
+// SPA fallback: serve index.html for any non-API route
+app.get('/*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not Found' });
+  }
+  res.sendFile(path.join(staticDir, 'index.html'));
+});
 
 // Error handler
 app.use((err, req, res, next) => {
