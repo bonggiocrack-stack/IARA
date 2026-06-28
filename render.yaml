@@ -18,6 +18,8 @@ services:
         value: pulseras2026
       - key: DATABASE_URL
         value: postgresql://neondb_owner:npg_7HOeMptSdmY5@ep-wandering-breeze-adetvf8t-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: RENDER_DOCKERFILE
+        value: "false"
     autoDeploy: true
     branch: main
     repo: https://github.com/bonggiocrack-stack/IARA.git

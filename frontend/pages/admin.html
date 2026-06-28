@@ -66,7 +66,16 @@
     <div class="card" id="productsSection">
       <div class="card-header">
         <h3 class="card-header-title">Catálogo de productos</h3>
-        <input type="text" id="searchInput" placeholder="Buscar..." class="card-search" oninput="renderProductsTable()" />
+        <div class="card-controls">
+          <select id="categoryFilter" class="card-filter" onchange="renderProductsTable()">
+            <option value="">Todas las categorías</option>
+            <option value="pulseras">Pulseras</option>
+            <option value="accesorios">Accesorios</option>
+            <option value="souvenirs">Souvenirs</option>
+          </select>
+          <input type="date" id="dateFilter" class="card-filter" onchange="renderProductsTable()" />
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV('products')">📥 CSV</button>
+        </div>
       </div>
       <div class="card-body">
         <table>
@@ -89,7 +98,10 @@
     <div class="card" id="ordersSection" style="display:none;">
       <div class="card-header">
         <h3 class="card-header-title">Pedidos</h3>
-        <input type="text" id="orderSearchInput" placeholder="Buscar pedido..." class="card-search" oninput="renderOrdersTable()" />
+        <div class="card-controls">
+          <input type="text" id="orderSearchInput" placeholder="Buscar pedido..." class="card-search" oninput="renderOrdersTable()" />
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV('orders')">📥 CSV</button>
+        </div>
       </div>
       <div class="card-body">
         <table>
@@ -113,7 +125,10 @@
     <div class="card" id="testimonialsSection" style="display:none;">
       <div class="card-header">
         <h3 class="card-header-title">Testimonios de clientes</h3>
-        <button class="btn btn-primary" onclick="openTestimonialModal()">+ Nuevo Testimonio</button>
+        <div class="card-controls">
+          <button class="btn btn-primary btn-sm" onclick="openTestimonialModal()">+ Nuevo</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV('testimonials')">📥 CSV</button>
+        </div>
       </div>
       <div class="card-body">
         <table>
@@ -430,8 +445,15 @@
     }
 
     function renderProductsTable() {
-      const q = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = products.filter(p => (p.name + ' ' + p.description + ' ' + p.category).toLowerCase().includes(q));
+      const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+      const category = document.getElementById('categoryFilter')?.value || '';
+      const dateFilter = document.getElementById('dateFilter')?.value || '';
+      const filtered = products.filter(p => {
+        const matchesSearch = (p.name + ' ' + p.description + ' ' + p.category).toLowerCase().includes(q);
+        const matchesCategory = !category || p.category === category;
+        const matchesDate = !dateFilter || (p.created_at && p.created_at.startsWith(dateFilter));
+        return matchesSearch && matchesCategory && matchesDate;
+      });
       const tbody = document.getElementById('tableBody');
       if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><h3>Sin resultados</h3><p>No se encontraron productos.</p></td></tr>`;
@@ -768,6 +790,53 @@
       }
       navigateTo('products');
     });
+
+    function exportCSV(type) {
+      let data = [];
+      let filename = 'export.csv';
+      let headers = [];
+
+      if (type === 'products') {
+        data = products;
+        filename = 'productos.csv';
+        headers = ['ID', 'Nombre', 'Categoría', 'Precio', 'Descripción', 'Badge'];
+      } else if (type === 'testimonials') {
+        data = testimonials;
+        filename = 'testimonios.csv';
+        headers = ['ID', 'Nombre', 'Comentario', 'Valoración', 'Activo'];
+      } else if (type === 'orders') {
+        data = orders;
+        filename = 'pedidos.csv';
+        headers = ['ID', 'Cliente', 'Email', 'Total', 'Estado', 'Fecha'];
+      }
+
+      if (!data.length) {
+        showToast('No hay datos para exportar', 'error');
+        return;
+      }
+
+      const csvContent = [
+        headers.join(','),
+        ...data.map(row => {
+          if (type === 'products') {
+            return [row.id, `"${(row.name || '').replace(/"/g, '""')}"`, row.category, row.price, `"${(row.description || '').replace(/"/g, '""')}"`, row.badge || ''].join(',');
+          } else if (type === 'testimonials') {
+            return [row.id, `"${(row.name || '').replace(/"/g, '""')}"`, `"${(row.comment || '').replace(/"/g, '""')}"`, row.rating, row.active].join(',');
+          } else if (type === 'orders') {
+            const customer = row.customer || {};
+            return [row.id, `"${(customer.name || '').replace(/"/g, '""')}"`, `"${(customer.email || '').replace(/"/g, '""')}"`, row.total, row.status, row.created_at || ''].join(',');
+          }
+        })
+      ].join('\n');
+
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      showToast('CSV exportado correctamente', 'success');
+    }
   </script>
 </body>
 </html>
