@@ -906,23 +906,20 @@
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
   margin-bottom: 2rem;
   align-items: start;
 }
 
-.footer-info-full {
-  grid-column: 1 / -1;
-}
-
 .footer-section.footer-map iframe {
   width: 100%;
-  height: 180px;
+  height: 200px;
   border-radius: 10px;
   box-shadow: var(--shadow-sm);
   display: block;
   margin-top: 0.5rem;
+  border: 3px solid #f4c8d4;
 }
 
 .footer-section h4 {
