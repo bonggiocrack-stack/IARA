@@ -61,12 +61,17 @@ async function saveFile(req, res) {
   if (!req.file) {
     return res.status(400).json({ error: 'No se recibió imagen' });
   }
-  const relativePath = isVercel ? req.file.filename : `/uploads/products/${req.file.filename}`;
-  res.json({
-    url: relativePath,
-    filename: req.file.filename,
-    size: req.file.size
-  });
+  if (isVercel) {
+    const buffer = fs.readFileSync(req.file.path);
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const mime = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : ext === '.gif' ? 'image/gif' : 'image/jpeg';
+    const base64 = buffer.toString('base64');
+    const dataUrl = `data:${mime};base64,${base64}`;
+    try { fs.unlinkSync(req.file.path); } catch {}
+    return res.json({ url: dataUrl, isBase64: true });
+  }
+  const relativePath = `/uploads/products/${req.file.filename}`;
+  res.json({ url: relativePath, filename: req.file.filename, size: req.file.size });
 }
 
 module.exports = {

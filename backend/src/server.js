@@ -4,7 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
 const { initDB } = require('./lib/db');
-const { handleUploadError, saveFile } = require('./lib/upload');
+const { handleUploadError, saveFile, uploadSingle } = require('./lib/upload');
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
@@ -52,7 +52,7 @@ app.use('/api', require('./routes/siteTexts'));
 app.use('/api', require('./routes/testimonials'));
 
 // Upload con multer
-app.post('/api/admin/upload', require('./middleware/auth').adminAuth, handleUploadError, saveFile);
+app.post('/api/admin/upload', require('./middleware/auth').adminAuth, uploadSingle, handleUploadError, saveFile);
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '..', '..', 'uploads')));
@@ -60,7 +60,6 @@ const staticDir = path.join(__dirname, '..', '..', 'public');
 
 app.use('/css', express.static(path.join(staticDir, 'css')));
 app.use('/js', express.static(path.join(staticDir, 'js')));
-app.use('/uploads', express.static(path.join(staticDir, 'uploads')));
 app.use('/pages', express.static(path.join(staticDir, 'pages')));
 app.use(express.static(staticDir));
 
