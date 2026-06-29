@@ -4,19 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pago aprobado | Artesanía Gualeguay</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/components.css" />
   <link rel="stylesheet" href="../css/animations.css" />
-
+  <link rel="stylesheet" href="../css/checkout.css" />
   <style>
     .wrap{max-width:900px;margin:0 auto;padding:7rem 1.5rem;}
     .card{background:var(--white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:2.5rem;}
     .ok{font-size:4rem;}
-    p{color:var(--text-muted);margin-top:0.8rem;}
+    p{color:var(--text-muted);margin-top:0.8rem;line-height:1.6;}
     .actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;}
+    .order-detail{margin-top:1.5rem;padding:1rem;background:var(--blush);border-radius:var(--radius-sm);border:1px solid #f4c8d4;font-size:0.9rem;color:var(--text-dark);}
+    .order-detail strong{color:var(--rose-dark);}
   </style>
 </head>
 <body>
@@ -25,16 +26,26 @@
       <div class="ok" aria-hidden="true">✅</div>
       <h1 style="margin-top:1rem;">¡Pago aprobado!</h1>
       <p>Gracias por tu compra en Artesanía Gualeguay. Te contactaremos si necesitamos coordinar algún detalle.</p>
+      <div id="orderDetail" class="order-detail"></div>
       <div class="actions">
-  <a class="btn-primary" href="../index.html">Volver al inicio</a>
-  <a class="btn-secondary" style="text-decoration:none;padding:14px 24px;border-radius:var(--radius-xl);border:2px solid var(--rose-light);color:var(--rose-dark);font-weight:600;" href="../pages/cart.html">Ver carrito</a>
+        <a class="btn-primary" href="../index.html">Volver al inicio</a>
+        <a class="btn-secondary" style="text-decoration:none;padding:14px 24px;border-radius:var(--radius-xl);border:2px solid var(--rose-light);color:var(--rose-dark);font-weight:600;" href="../pages/cart.html">Ver carrito</a>
       </div>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded',()=>{
-      document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+      const params = new URLSearchParams(window.location.search);
+      const collectionId = params.get('collection_id');
+      const externalRef = params.get('external_reference');
+      const status = params.get('status');
+      const el = document.getElementById('orderDetail');
+      if (status === 'approved' && externalRef) {
+        el.innerHTML = `<strong>Pedido:</strong> ${externalRef}<br/><strong>ID de pago:</strong> ${collectionId || '—'}`;
+      } else {
+        el.innerHTML = `<strong>Estado:</strong> ${status || 'procesando'}`;
+      }
     });
   </script>
 </body>

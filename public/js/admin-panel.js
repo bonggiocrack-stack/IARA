@@ -2,7 +2,7 @@
 
 const API_BASE = (() => {
   const host = window.location.host;
-  if (host.includes('vercel.app')) return 'https://iara-os3h.onrender.com';
+  if (host.includes('vercel.app')) return '/';
   if (host.includes('onrender.com')) return '/';
   return '/';
 })();
@@ -31,7 +31,7 @@ async function checkServerHealth() {
     hint.textContent = '✅ Servidor conectado';
     hint.style.color = '#10b981';
   } catch (err) {
-    hint.textContent = `❌ No se pudo conectar al servidor: ${err.message}`;
+    hint.textContent = '⚠️ No se pudo conectar. Reintentá en unos segundos.';
     hint.style.color = '#ef4444';
   } finally {
     btn.textContent = 'Ingresar';

@@ -397,6 +397,10 @@
   box-shadow: var(--shadow-lg);
 }
 
+[data-theme="dark"] .hero-card {
+  background: var(--blush);
+}
+
 .hero-card-img {
   width: 100%;
   height: 100px;
@@ -709,6 +713,10 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   z-index: 5;
+}
+
+.product-badge.badge-out {
+  background: #ef4444;
 }
 
 /* ==================== ABOUT SECTION ==================== */
@@ -1122,6 +1130,27 @@
 .shipping-summary.visible { display: block; }
 
 .shipping-summary strong { color: var(--rose-dark); }
+
+/* ==================== MAPA ==================== */
+.map-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 5rem 40px;
+}
+
+.map-container {
+  height: 360px;
+  border-radius: var(--radius-md);
+  border: 1px solid #f4d0da;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: #f5e6ec;
+}
+
+@media (max-width: 768px) {
+  .map-section { padding: 3rem 20px; }
+  .map-container { height: 260px; }
+}
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {

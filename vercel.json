@@ -1,23 +1,30 @@
 {
   "version": 2,
+  "framework": null,
   "builds": [
     {
-      "src": "public/**",
-      "use": "@vercel/static"
+      "src": "backend/src/server.js",
+      "use": "@vercel/node"
     },
     {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
+      "src": "public/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/server.js"
+      "dest": "backend/src/server.js"
     },
     {
       "src": "/(.*)",
       "dest": "/public/$1"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "ADMIN_USER": "iara",
+    "ADMIN_PASS": "pulseras2026",
+    "ALLOWED_ORIGINS": "https://iara-yrdx.onrender.com,https://iara-eight.vercel.app,https://iara-h5jp7meps-iara3.vercel.app"
+  }
 }

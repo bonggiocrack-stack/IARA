@@ -149,10 +149,14 @@ function renderProducts(productsToRender) {
     const badgeHtml = product.badge ? `<span class="product-badge">${product.badge}</span>` : '';
     const waMessage = encodeURIComponent(`Hola! Me interesa el producto: ${product.name} - ${formatARS(product.price)}`);
     const waLink = `https://wa.me/${CONFIG.CONTACT.WHATSAPP.replace(/[^\d]/g, '')}?text=${waMessage}`;
+    const stock = Number(product.stock ?? 0);
+    const outOfStock = stock <= 0;
+    const disabledAttr = outOfStock ? 'disabled style="opacity:.5;cursor:not-allowed;"' : '';
     return `
       <div class="product-card reveal">
         <div class="product-image ${catClass}" aria-hidden="true">${imageHtml}</div>
         ${badgeHtml}
+        ${outOfStock ? '<span class="product-badge badge-out">Sin stock</span>' : ''}
         <div class="product-info">
           <span class="product-category">${product.category}</span>
           <h3 class="product-name">${product.name}</h3>
@@ -160,7 +164,7 @@ function renderProducts(productsToRender) {
           <div class="product-footer">
             <span class="product-price">${formatARS(product.price)}</span>
             <div style="display:flex;gap:0.5rem;">
-              <button class="btn-add-cart" onclick="addToCart({id: ${product.id}, name: '${product.name}', price: ${product.price}, emoji: '${product.emoji || '📿'}', image: '${product.image || ''}', unit: 'u', qty: 1}); event.stopPropagation();">Agregar</button>
+              <button class="btn-add-cart" onclick="addToCart({id: ${product.id}, name: '${product.name}', price: ${product.price}, emoji: '${product.emoji || '📿'}', image: '${product.image || ''}', stock: ${stock}, unit: 'u', qty: 1}); event.stopPropagation();" ${disabledAttr}>Agregar</button>
               <a href="${waLink}" target="_blank" class="btn-outline btn-sm" rel="noopener" title="Consultar por WhatsApp">💬</a>
             </div>
           </div>

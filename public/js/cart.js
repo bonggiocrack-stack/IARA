@@ -22,14 +22,14 @@ function addToCart(product) {
   if (existing) {
     const newQty = (existing.qty || 1) + (product.qty || 1);
     if (newQty > productStock) {
-      showToast('', `Stock insuficiente para ${product.name}`, 'error');
+      showToast('', `Sin stock de ${product.name}`, 'error');
       return;
     }
     existing.qty = newQty;
   } else {
     const qty = product.qty || 1;
     if (qty > productStock) {
-      showToast('', `Stock insuficiente para ${product.name}`, 'error');
+      showToast('', `Sin stock de ${product.name}`, 'error');
       return;
     }
     cart.push({ ...product, qty });
@@ -44,7 +44,7 @@ function updateCartQty(productId, qty) {
     const productStock = Number(item.stock ?? Infinity);
     const newQty = Math.max(1, Number(qty));
     if (newQty > productStock) {
-      showToast('', 'Stock insuficiente', 'error');
+      showToast('', 'Sin stock', 'error');
       return;
     }
     item.qty = newQty;

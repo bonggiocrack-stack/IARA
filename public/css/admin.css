@@ -459,10 +459,18 @@ tr:last-child td {
   color: #64748b;
 }
 
+[data-theme="dark"] .empty-state {
+  color: #1a1a1a;
+}
+
 .empty-state h3 {
   font-family: 'Playfair Display', serif;
   margin-bottom: 0.5rem;
   color: #0f172a;
+}
+
+[data-theme="dark"] .empty-state h3 {
+  color: var(--text-dark);
 }
 
 .toast-container {
@@ -478,6 +486,7 @@ tr:last-child td {
 .toast {
   padding: 0.85rem 1rem;
   background: #fff;
+  color: #111;
   border: 1px solid var(--border);
   border-left: 4px solid var(--accent);
   border-radius: 10px;
