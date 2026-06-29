@@ -108,6 +108,96 @@ const defaultProducts = [
     description: 'Marcapáginas hecho a mano con técnica mixta',
     emoji: '🎁',
     image: ''
+  },
+  {
+    id: 13,
+    name: 'Pulsera Perlas Naturales',
+    category: 'pulseras',
+    price: 620,
+    description: 'Pulsera con perlas naturales y cierre ajustable',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 14,
+    name: 'Dije Macramé',
+    category: 'accesorios',
+    price: 350,
+    description: 'Dije tejido en macramé con hilo encerado',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 15,
+    name: 'Imán Cerámica Flor',
+    category: 'souvenirs',
+    price: 180,
+    description: 'Imán de cerámica con detalle flor pintado a mano',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 16,
+    name: 'Pulsera Trenzada Cuero',
+    category: 'pulseras',
+    price: 750,
+    description: 'Pulsera de cuero trenzado con cierre magnético',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 17,
+    name: 'Pack Llaveros x5',
+    category: 'accesorios',
+    price: 1100,
+    description: 'Set de 5 llaveros con diseños variados',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 18,
+    name: 'Souvenir Imán Ciudad',
+    category: 'souvenirs',
+    price: 200,
+    description: 'Imán con ilustración de la ciudad',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 19,
+    name: 'Collar Largo Boho',
+    category: 'accesorios',
+    price: 950,
+    description: 'Collar largo con cuentas y dijes étnicos',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 20,
+    name: 'Pulsera Ajustable Nudos',
+    category: 'pulseras',
+    price: 400,
+    description: 'Pulsera de nudos ajustable estilo surfer',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 21,
+    name: 'Kit Regalo Personalizado',
+    category: 'souvenirs',
+    price: 1500,
+    description: 'Set de regalo con productos a elección',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 22,
+    name: 'Anillo Anatómico Corazón',
+    category: 'accesorios',
+    price: 380,
+    description: 'Anillo con diseño de corazón anatómico',
+    emoji: '💎',
+    image: ''
   }
 ];
 
