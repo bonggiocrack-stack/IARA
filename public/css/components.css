@@ -906,9 +906,34 @@
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
   gap: 2rem;
   margin-bottom: 2rem;
+  align-items: start;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.footer-section.footer-map iframe {
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.footer-section.footer-map iframe {
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  display: block;
+  margin-top: 0.5rem;
 }
 
 .footer-section h4 {
