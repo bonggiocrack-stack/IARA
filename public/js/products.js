@@ -288,6 +288,87 @@ const defaultProducts = [
     description: 'Pulsera con cuentas brillantes para ocasiones especiales',
     emoji: '📿',
     image: ''
+  },
+  {
+    id: 33,
+    name: 'Collar Turquesa Natural',
+    category: 'accesorios',
+    price: 720,
+    description: 'Collar corto con piedra turquesa natural',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 34,
+    name: 'Pulsera Nudo Celta',
+    category: 'pulseras',
+    price: 470,
+    description: 'Pulsera con nudo celta en hilo encerado',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 35,
+    name: 'Imán Madera Corazón',
+    category: 'souvenirs',
+    price: 190,
+    description: 'Imán de madera con forma de corazón',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 36,
+    name: 'Pack Dijes x4',
+    category: 'accesorios',
+    price: 980,
+    description: 'Set de 4 dijes combinados para personalizar',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 37,
+    name: 'Pulsera Rosa Fuerte',
+    category: 'pulseras',
+    price: 510,
+    description: 'Pulsera en tono rosa intenso con cierre ajustable',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 38,
+    name: 'Souvenir Llavero Ciudad',
+    category: 'souvenirs',
+    price: 240,
+    description: 'Llavero con grabado del nombre de la ciudad',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 39,
+    name: 'Aros Cadena Fina',
+    category: 'accesorios',
+    price: 630,
+    description: 'Aros colgantes con cadena fina artesanal',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 40,
+    name: 'Pulserada Mix 5u',
+    category: 'pulseras',
+    price: 1450,
+    description: 'Pack de 5 pulseras surtidas en colores pastel',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 41,
+    name: 'Cuaderno Decorado',
+    category: 'accesorios',
+    price: 170,
+    description: 'Cuaderno tapa dura con ilustración artesanal',
+    emoji: '💎',
+    image: ''
   }
 ];
 
