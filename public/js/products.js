@@ -198,6 +198,96 @@ const defaultProducts = [
     description: 'Anillo con diseño de corazón anatómico',
     emoji: '💎',
     image: ''
+  },
+  {
+    id: 23,
+    name: 'Pulsera Multicolor Caramelo',
+    category: 'pulseras',
+    price: 580,
+    description: 'Pulsera con hilos de colores vibrantes estilo caramelo',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 24,
+    name: 'Dije Hoja Minima',
+    category: 'accesorios',
+    price: 220,
+    description: 'Dije de hojas con baño en oro',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 25,
+    name: 'Souvenir Lapiz Decorado',
+    category: 'souvenirs',
+    price: 180,
+    description: 'Lapiz con detalles pintados a mano',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 26,
+    name: 'Pack Pulseras x3',
+    category: 'pulseras',
+    price: 1300,
+    description: 'Set de 3 pulseras combinadas en tonos pastel',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 27,
+    name: 'Collar Cadena Perla',
+    category: 'accesorios',
+    price: 890,
+    description: 'Collar cadena con dije de perla artesanal',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 28,
+    name: 'Imán Corazón Tallado',
+    category: 'souvenirs',
+    price: 160,
+    description: 'Imán en forma de corazón con grabado',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 29,
+    name: 'Pulsera Hilo Ajustable',
+    category: 'pulseras',
+    price: 340,
+    description: 'Pulsera de hilo encerado ajustable',
+    emoji: '📿',
+    image: ''
+  },
+  {
+    id: 30,
+    name: 'Llavero Inicial',
+    category: 'accesorios',
+    price: 260,
+    description: 'Llavero personalizado con inicial de ceramica',
+    emoji: '💎',
+    image: ''
+  },
+  {
+    id: 31,
+    name: 'Souvenir Sobre Madera',
+    category: 'souvenirs',
+    price: 430,
+    description: 'Souvenir en madera grabada con motivo local',
+    emoji: '🎁',
+    image: ''
+  },
+  {
+    id: 32,
+    name: 'Pulsera Destellos',
+    category: 'pulseras',
+    price: 530,
+    description: 'Pulsera con cuentas brillantes para ocasiones especiales',
+    emoji: '📿',
+    image: ''
   }
 ];
 
