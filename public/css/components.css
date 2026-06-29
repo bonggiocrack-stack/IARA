@@ -895,7 +895,24 @@
   margin-bottom: 1.5rem;
 }
 
-.footer-cta .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; }
+.footer-brand { flex: 2; }
+
+.footer-brand p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.footer-map {
+  height: 220px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 3px solid #f4c8d4;
+  margin-top: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  background: #f5e6ec;
+}
 
 /* ==================== FOOTER ==================== */
 .footer {

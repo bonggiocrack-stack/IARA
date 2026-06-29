@@ -380,22 +380,14 @@
     </a>
   </section>
 
-  <!-- ============== MAPA ============== -->
-  <section class="map-section">
-    <div class="section-header">
-      <span class="section-tag reveal">Ubicación</span>
-      <h2 class="section-title reveal">Visitá nuestro local</h2>
-      <p class="section-subtitle reveal">Estamos en Gualeguay, Entre Ríos</p>
-    </div>
-    <div id="map" class="map-container reveal"></div>
-  </section>
-
   <!-- ============== FOOTER ============== -->
   <footer class="footer">
     <div class="footer-content">
-      <div class="footer-section">
+      <div class="footer-section footer-brand">
         <h4>Artesanía Gualeguay</h4>
         <p>Creando pulseras y souvenirs únicos desde el corazón de Gualeguay, Entre Ríos.</p>
+        <p><strong>📍 San Antonio Nte. 473, E2840 Gualeguay, Entre Ríos</strong></p>
+        <div id="footerMap" class="footer-map"></div>
         <div class="social-links">
           <a href="https://wa.me/5493444634444" title="WhatsApp" class="social-icon" aria-label="WhatsApp">💬</a>
           <a href="#" title="Instagram" class="social-icon" aria-label="Instagram">📷</a>
@@ -431,70 +423,17 @@
 
   <!-- ============== SCRIPTS ============== -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/cart.js"></script>
-  <script src="js/products.js"></script>
-  <script src="js/ui.js"></script>
   <script>
     (function() {
-      const counters = document.querySelectorAll('.stat-number[data-target]');
-      if (!counters.length) return;
-
-      function animateCount(el) {
-        const target = parseInt(el.getAttribute('data-target'), 10);
-        if (isNaN(target)) return;
-        const duration = 1400;
-        const start = performance.now();
-        const suffix = el.textContent.replace(/[0-9]/g, '').trim();
-
-        function tick(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const current = Math.floor(eased * target);
-          el.textContent = current + (suffix || '');
-          if (progress < 1) {
-            requestAnimationFrame(tick);
-          } else {
-            el.textContent = target + (suffix || '');
-          }
-        }
-
-        requestAnimationFrame(tick);
-      }
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            animateCount(entry.target);
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.5 });
-
-      counters.forEach(el => observer.observe(el));
-    })();
-
-    (function() {
-      const schema = {
-        '@context': 'https://schema.org',
-        '@type': 'Store',
-        name: 'Artesanía Gualeguay',
-        description: 'Pulseras y souvenirs artesanales',
-        url: window.location.origin,
-        telephone: '+5493444634444',
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: 'Gualeguay',
-          addressRegion: 'Entre Ríos',
-          addressCountry: 'AR'
-        }
-      };
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.text = JSON.stringify(schema);
-      document.head.appendChild(script);
+      const mapEl = document.getElementById('footerMap');
+      if (!mapEl) return;
+      const map = L.map('footerMap').setView([-33.141, -59.309], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      L.marker([-33.141, -59.309]).addTo(map)
+        .bindPopup('Artesanía Gualeguay<br>San Antonio Nte. 473, E2840 Gualeguay, Entre Ríos')
+        .openPopup();
     })();
   </script>
   <script>
